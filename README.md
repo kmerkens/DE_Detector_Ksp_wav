@@ -1,3 +1,77 @@
+## Update 20150217 changes by kmerkens to work with .wav files sampling at rates over 200kHz (no aliasing), particularly for recordings of kogia, dall's porpoise, etc. 
+-cat_click_times.m - replaced with cat_click_times_forwav.m
+	line 38 "real" times (relative to the baby jesus) calculated from hdr only. 
+	line 47 removed lines for calculating "real" times
+	line 52 removed lines for calculating "real" times
+	line 75 commented out section for plotting - not likely relevant for short wav file samples. 
+	line 114 removed save parameters medianValues, meanSpecClicks, iciEncs as not using encounters.
+
+## Update 20150205 changes by kmerkens to identify kogia signals on xwav data with 320kHz sampling rate
+-Created files: 
+	cat_all_mats.m (to combine the .mat files output from cat_click_times.m to get overall summary statistics and 			make plots of the detections from the entire deployment)
+	cat_click_times.m (take all the .mat output files from the detector and produce one .mat with all of the 				parameters concatenated for that directory, and to calculate the actual times of the clicks (relative 			to the baby jesus).  Also can generate one set of plots for each encounter. Saves one summary .			mat and one long list of start/end times as .xls
+	guidedDetection.m (Added to increase efficiency and accuracy by only running detector over xwav files 			spanned by a previously defined "detection", requires .xls input file, with start/end times of 				encounters formatted as numbers. Called by dFind_xwavs.
+	plotClickEncounters_150310.m (Generates plots of clicks according to encounter start/end times, as long as 			the encounter is contained within one .xwav. (so, it's mostly useless))
+	plotClickEncounters_posthoc_150310.m (Generates a set of plots for each encounter, even if they 		span multiple xwavs. Called by cat_clicks_mat.m for plotting after the detector has been run.
+
+-de_detector.m
+	line 58 added parameter "GuideDetector" to indicate using a pre-definted set of periods ffor checking or not
+	line 62 - added input variable "guideDetector" to the dFind_xwavs command, and returned variables 				"encounterTimes" and "GraphDir" to be passed to later children
+	line 86 added input variables "encounterTimes,guideDetector,GraphDir" to dHighres_click_batch
+-dLoad_HRsettings.m
+	various parameters adjusted for different data type
+-dLoad_STsettings.m
+	various parameters adjusted for different data type
+-clickInlinePProc.m
+	line 1 added input values "encoutnerTimes, guideDetector,hdr"
+	lines 19-69 added code to remove clicks from minutes with more than 75 clicks per minute
+	lines 70-116 added code to remove clicks from seconds with more than 20 clicks per second
+	lines 161-187 added code to remove clicks from outside encounter times, as identified by guided detector xls 		input sheet. 
+-clickParameters.m
+	lines 29-30 added parameters zerosvec and adjusted paramter yFilt to be used in lines 57-58
+	line 57-58 added clarification to only pull out section of bandwidth allowed through BPF
+	line 113 added code to plot the spectrum for troubleshooting (commented out)
+	line 150 removed sections for identifying kogia spp in 200 khz data - not applicable. 
+-dt)Highres_click_batch.m
+	provided input parameters "encounterTimes, guideDetector, GraphDir"
+	line 55 added "encounterTimes, guideDetector,hdr" to input parameters for clickInlinePProc.m
+	line 82 added call to plotClickEncounters_150310 if guideDetector ==1 to make plots
+-dFind_xwavs.m
+	provded input parameter guideDetector
+	line 10 added additional ffile name to be ignored ("other") in case extra non-xwav files are present (and 		should be ignored) in the main director.
+	linee 20-22 added call to guidedDetection if selected
+
+
+## Update 20150123 changes by kmerkens to identify Kogia spp signals on data from 200kHz sampling rate.
+-de_detector.m
+	line 25 - added tic
+	lines 27-30 added my path to tf file
+	line 38  to my basedir
+	line 45 to Tinian
+	line 54 uncommented indisk…
+	lines 73, 74 added “done low res” time elapsed toc
+	line 85 added toc
+-dLoad_HRsettings.m
+	line 45 added 3 parameters for kogia click id, to be used in clickParameters.m
+		parametersHR.localminbottom = 63; %Frequency above which will be checked for local min                                         parametersHR.localmintop = 90; %Frequency below which will be checked for local min.                                              parametersHR.localminThr = 68; %Frequency above which a local minimum must exist in order 			to be thrown out.  If the min is below, the click will be kept            
+	Multiple parameters changed for Ksp. see comments in file
+-dLoad_STsettings.m    
+	Multiple parameters changed for Ksp. see comments in file            
+- clickParameters
+	Throughout - if clicks did not meet a critera, they were eliminated and the code moved on to the next click to 		save time (kfrasier's orinal calculated all parameters, and then checked them at the end)
+	line 50 added validClicks = ones(size(ppSignal));
+	added sections to do the ffollowing to retain kogia clicks
+		-Use the ratio of the median energy near 75 and 97kHz as a cutoff
+		-Use the ratio of the median energy near 55 kHz and 70 kHz as a cutoff
+		-check for local minimum between 60 and 90 kHz
+-dt_highres_click batch
+	line 49 commented out message
+	line 50 added toc
+-dHR_expand_region
+	lines 9-14 added check for curve_fitting_toolbox, and use fastsmooth
+
+
+
 ## Update 11/21/2014
 Detector has been updated to accept .wav files in addition to x.wavs.
 If you run the detector on directories of wav files, it will look for file start time information in the file name.

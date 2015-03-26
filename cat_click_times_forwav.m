@@ -1,6 +1,13 @@
-% cat_click_times.m
-% Could turn this into a function and instert at the end of de_detector.m
-% function cat_click_times(inDir)
+% cat_click_times.m Code to take all the .mat output files from the
+% detector and produce one .mat with all of the parameters concatenated for
+% that directory, and to calculate the actual times of the clicks (relative
+% to the baby jesus).  Also can call the plotting code to generate one set
+% of plots for each encounter (not separated by .xwav file), unless the
+% bottom section is commented out.
+% Saves one summary .mat and one long list of start/end times as .xls (and
+% plots, if requested)
+% Different from cat_click_times.m - doesn't calculate time relative to raw
+% start, uses hdr info. plotting section commented out.
 
 %Set sampling frequency, in Hz
 fs = 320000;
@@ -38,28 +45,11 @@ for i1 = 1:length(matList)
         yFiltcon = [yFiltcon; yFilt];
         % write label file:
         clickTimeRel = zeros(size(clickDnumTemp));
-        %rawStarts = hdr.raw.dnumStart + datenum([2000,0,0]);
-        %rawDurs = (hdr.raw.dnumEnd-hdr.raw.dnumStart)*sec2dnum;
         % generate label file by replacing .mat extension with .lab for
         % wavesurfer:
         outFileName = strrep(matList(i1).name,'.mat','.lab');
         % open file for writing
         fidOut = fopen(fullfile(inDir,outFileName),'w+');
-%         for i2 = 1:size(clickTimes,1)
-%             % figure out the closest raw start less than the click start,
-%             % and subtract that time out of the click time, so it's not
-%             % relative
-%             thisRaw = find(rawStarts<=clickDnumTemp(i2,1),1,'last');
-%             clickTimeRel = (clickDnumTemp(i2,:) - rawStarts(thisRaw))*sec2dnum;
-%             % add back in the duration of recordings in seconds preceeding
-%             % this raw file
-%             if thisRaw>1
-%                 clickTimeRel = clickTimeRel + sum(rawDurs(1:thisRaw-1));
-%             end
-%             % writes click number as third item in row, because some label
-%             % is needed:
-%             fprintf(fidOut, '%f %f %d\n', clickTimeRel(1,1),clickTimeRel(1,2),i2);
-%         end
         fclose(fidOut);
     end
 end
