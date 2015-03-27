@@ -84,7 +84,7 @@ for idx1=1:N; % for each data file
     % clicks have been removed. Save those to a directory.
     if guideDetector == 1
         plotClickEncounters_150310(encounterTimes,clickTimes,ppSignal,...
-            durClick,specClickTf,peakFr,nDur,yFilt,hdr,GraphDir);
+            durClick,specClickTf,peakFr,nDur,yFilt,hdr,GraphDir,f);
     end
 end
     

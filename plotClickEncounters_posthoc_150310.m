@@ -2,6 +2,11 @@
 function [medianValues,meanSpecClicks,iciEncs] = plotClickEncounters_posthoc_150310(encounterTimes,clickTimes,ppSignal,...
     durClick,specClickTf,peakFr,nDur,yFilt,hdr,GraphDir,fs)
 
+% Generates a set of plots for each encounter, even if they span multiple
+% xwavs. Called by cat_click_times.m for plotting after the detector has
+% been run.
+
+
 %,Convert all clicTimes to "real" datenums, relative to baby jesus
 
 clickDnum = clickTimes;
@@ -74,7 +79,8 @@ for ne = 1:numEnc
         specSorted=specSorted.';
 
         N=size(specSorted,1)*2;
-        f=0:(fs/2000)/(N/2-1):fs/2000;
+        %f=0:(fs/2000)/(N/2-1):fs/2000; %this should be loaded, don't
+        %recalculate it!
         datarow=size(specSorted,2);
 
         %calculate mean spectra for click and noise

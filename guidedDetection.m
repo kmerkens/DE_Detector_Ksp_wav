@@ -1,4 +1,7 @@
 function [xwavNames,matlabDates,GraphDir] = guidedDetection(baseDir)
+%Added to increase efficiency and accuracy by only running detector over 
+%xwav files spanned by a previously defined "detection", requires .xls
+%input file, with start/end times of encounters formatted as numbers.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % read in .xls file produced by logger

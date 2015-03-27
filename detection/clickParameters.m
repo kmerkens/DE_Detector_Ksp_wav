@@ -112,6 +112,13 @@ for c = 1:size(clicks,1)
     end
     
     
+%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     %if peakFr(c) > 140; %make a plot of the spectrum to check what's up 
+%     %with these really high freq signals
+%          plot(f(1:end-1),specClickTf{c}(1:end-1))
+%     %end
+        
+    
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,62 +151,8 @@ for c = 1:size(clicks,1)
         continue
     end
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%Not necessary for 320Khz Data
-%     %Use the ratio of the median energy near 75 and 97kHz as a cutoff,
-%     %throwing out clicks with too low a ratio (that means there's too much
-%     %energy at lower frequencies/likely a click lower down)
-%     lowsetC = find(f>72,1,'first');
-%     lowsetD = find(f<77,1,'last');
-%     highsetC = find(f>94,1,'first');
-%     highsetD = find(f<99,1,'last');
-%     %Get the median from each
-%     lowmed = median(specClickTf{c}(lowsetC:lowsetD));
-%     highmed = median(specClickTf{c}(highsetC:highsetD));
-%     specratioH(c) = highmed/lowmed; 
-% 
-%     if specratioH(c) < 1.07
-%         validClicks(c) = 0;
-%         continue
-%     end
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%Not necessary for 320Khz Data
-%     %Use the ratio of the median energy near 55 kHz and 70 kHz as a cutoff
-%     %- if it's lower than 1.15, throw the click out. 
-%     %identify the bins that will be used to find the low and high values
-%     %for ratio calculation
-%     lowsetA = find(f>52,1,'first');
-%     lowsetB = find(f<57,1,'last');
-%     highsetA = find(f>67,1,'first');
-%     highsetB = find(f<72,1,'last');
-%     %Get the median from each
-%     lowmed = median(specClickTf{c}(lowsetA:lowsetB));
-%     highmed = median(specClickTf{c}(highsetA:highsetB));
-%     specratioL(c) = highmed/lowmed; 
-%     
-%     if specratioL(c) < 1.165
-%         validClicks(c) = 0;
-%         continue
-%     end
-    
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      %%%Not necessary for 320Khz Data
-%     %check for local minimum between 60 and 90 kHz, and if it exists closer
-%     %to 90, the click is not valid (likely dsp).
-%     %Find the bins that match the frequencies 60-80 kHz
-%     bottombin = find(f >= p.localminbottom,1, 'first');
-%     topbin = find(f <p.localmintop,1, 'last');
-%     %Find the minimum in that range
-%     localmindb = min(specClickTf{c}(bottombin:topbin));
-%     localminbin = find((specClickTf{c}(1:end-1)) == localmindb);
-%     localminf(c) = f(localminbin);
-% 
-%     if localminf(c) > p.localminThr
-%         validClicks(c) = 0;
-%         continue
-%     end
-    
+   
+  
    
     %%%%%%%%%%%%%%%%%
     % calculate click envelope (code & concept from SBP 2014):
@@ -259,8 +212,33 @@ for c = 1:size(clicks,1)
      if deltaEnv(c) < p.dEvLims(1)
         validClicks(c) = 0;
         continue
-    end
+     end
     
+
+%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     %Something to assess "shape" of time series - check for "teardrop"
+%     %kogia shape - if the number of samples after the peak is larger than
+%     %from before. Two thresholds to set before: the bigenv (big envelope),
+%     %and the propthresh 
+%     %ONLY USE when you want to keep the BEST, PRETTIEST, CLOSEST TO ON AXIS
+%     %clicks, like when you want an "ideal" data set, or are comparing
+%     %with other, similar species, like Dall's
+%     
+%     bigenv = 0.01;
+%     overthresh = find(env>0.1);
+%     numover = size(overthresh,2);
+%     smaller = overthresh<(find(env==1));
+%     numsmaller = sum(smaller);
+%     propsmaller(c) = numsmaller/numover;
+%     propthresh = 0.4;
+%     
+%      if propsmaller(c) > propthresh
+%         validClicks(c) = 0;
+%         continue
+%     end
+%     
+
+
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Calculate duration
@@ -271,11 +249,7 @@ for c = 1:size(clicks,1)
         continue
     end
     
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     %Make a plot of the spectrum, to show what we're dealing with
-%     figure
-%     plot(f(1:end-1),specClickTf{c}(1:end-1))
-%     close
+
 
     
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

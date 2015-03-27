@@ -5,6 +5,22 @@
 	line 52 removed lines for calculating "real" times
 	line 75 commented out section for plotting - not likely relevant for short wav file samples. 
 	line 114 removed save parameters medianValues, meanSpecClicks, iciEncs as not using encounters.
+-dLoad_HRsettings
+	various parameter thresholds changed for the different example files
+-dLoadSTsettings
+	various parameter thresholds changed for the different example files
+-plotClickEncounters_150310.m
+	line 33-36 using clickTimes to calculate ici because they're already dnums relative to the baby jesus, not 		relative to the raw file start like they are in the harp data.
+-clickInlinePProc.m
+	lines 24-116 commented out code to remove minutes/seconds with too many clicks.
+	lines 166-187 aded code to remove echoes immediately following first click for when recording was made in 		captivity.
+-dtST_batch.m
+	line 29 and 57 added OR statement to deal with formatting of file extension .wav vs. .WAV
+-dFind_xwavs.m
+	lines 47-48 added code to generate metadata and Graph directories, since it's unlikely that these will ever 		be guided detectors. 
+-get_fileset.m
+	lines 12-13 added to make.c file names for .wav files, not just .x.wav
+
 
 ## Update 20150205 changes by kmerkens to identify kogia signals on xwav data with 320kHz sampling rate
 -Created files: 

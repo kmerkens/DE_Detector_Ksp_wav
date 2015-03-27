@@ -1,12 +1,17 @@
 
 function plotClickEncounters_150310(encounterTimes,clickTimes,ppSignal,...
-    durClick,specClickTf,peakFr,nDur,yFilt,hdr,GraphDir)
+    durClick,specClickTf,peakFr,nDur,yFilt,hdr,GraphDir,f)
+%Generates plots of clicks according to encounter start/end times, as long
+%as the encounter is contained within one .xwav. (so, it's mostly useless),
+%and guideDetector has been selected in de_detector.m
 
 fs = hdr.fs;
 
 %,Convert all clicTimes to "real" datenums, relative to baby jesus
 sec2dnum = 60*60*24; % conversion factor to get from seconds to matlab datenum
 clickDnum = (clickTimes./sec2dnum) + hdr.start.dnum + datenum([2000,0,0]);
+%not using clickDnum later because for wav ffiles they are already in dnum,
+%so clickTimes is appropriate.
 
 %Loop through the encounters, seeking for clicks that fall within the time
 %frame
@@ -25,7 +30,9 @@ for ne = 1:numEnc
     if ~isempty(clicksThisEnc) %If there are some clicks...
         
         %Calculate ici
-        pos1 = [clickTimes(clicksThisEnc,1);0];
+        pos1 = [clickTimes(clicksThisEnc,1);0]; %using clickTimes for wav files
+        %because they're already relative to baby jesus, not start of raw
+        %file. 
         pos2 = [0;clickTimes(clicksThisEnc,1)];
         iciEncNum = pos1(2:end-1)-pos2(2:end-1);
         iciEncVec = datevec(iciEncNum); %To get the vector
@@ -62,7 +69,8 @@ for ne = 1:numEnc
         specSorted=specSorted.';
 
         N=size(specSorted,1)*2;
-        f=0:(fs/2000)/(N/2-1):fs/2000;
+        %f=0:(fs/2000)/(N/2-1):fs/2000;%This should be loaded, don't
+        %recalculate it!
         datarow=size(specSorted,2);
 
         %calculate mean spectra for click and noise
@@ -90,7 +98,7 @@ for ne = 1:numEnc
         xlim([0 1000])
         xlabel('inter-pulse interval (ms)')
         ylabel('counts')
-        text(0.5,0.9,['dur =',num2str(medianValue(3)),' us'],'Unit','normalized')
+        text(0.5,0.9,['dur =',num2str(medianValue(3)),' \mus'],'Unit','normalized')
         text(0.5,0.8,['ipi =',num2str(medianValue(2)),' ms'],'Unit','normalized')
 
         subplot(2,2,3)
