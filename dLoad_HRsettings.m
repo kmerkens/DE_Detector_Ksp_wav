@@ -4,9 +4,9 @@ function parametersHR = dLoad_HRsettings
 %parametersHR.bpRanges = [50000,99000]; % Bandpass filter params in Hz [min,max]
 %parametersHR.bpRanges = [5000,159000]; % For Kogia on 320
 %parametersHR.bpRanges = [50000,200000]; % For Kogia on 500
-%parametersHR.bpRanges = [50000,187000]; % For Kogia on 375
+parametersHR.bpRanges = [1000,187000]; % For Kogia on 375
 %parametersHR.bpRanges = [5000,200000]; % For dalls on 480
-parametersHR.bpRanges = [5000,143500]; %For Kogia on 288
+%parametersHR.bpRanges = [5000,143500]; %For Kogia on 288
 
 parametersHR.frameLengthUs = 1200; % For fft computation
 parametersHR.overlap = .5; % FFT overlap (in decimal, not percent form)
@@ -19,7 +19,8 @@ parametersHR.clipThreshold = .98;%  Normalized clipping threshold btwn 0 and 1. 
 %parametersHR.ppThresh = 100;% minimum  RL threshold - dB peak to peak.
 %parametersHR.ppThresh = 40;% minimum  RL threshold - dB peak to peak. 
 %Decreased for DMann wav, particularly because no tf available. 
-parametersHR.ppThresh = 20; %decresed further for V. Janik data. 
+parametersHR.ppThresh = 20; %decresed further for V. Janik data.
+
 %parametersHR.countThresh = 3500; % Keep consistent with Lo-res for predictability.
 % Can be higher than low res, but not lower!
 % Keep count threshold less than equivalent pp threshold. 
@@ -27,7 +28,7 @@ parametersHR.ppThresh = 20; %decresed further for V. Janik data.
 %            + transfer function
 % note: array uses 2^15
 %parametersHR.countThresh = 20000; %Set high for D. Mann wav files. 
-parametersHR.countThresh = 50; %Set lower for V. Janik wav files. 
+parametersHR.countThresh = 500; %Set lower for V. Janik wav files. 
 %parametersHR.countThresh = 800000; %Set very hi for dalls wav files. 
 
 

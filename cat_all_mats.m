@@ -4,12 +4,12 @@
 
 
 
-inDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\DetectorOutput_Hawaii18';
-GraphDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\DetectorOutput_Hawaii18\Final_histograms';
+inDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\DetectorOutput\VJanik_kogia';
+GraphDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\DetectorOutput\VJanik_kogia\Final_histograms';
 
 matList = dir(fullfile(inDir,'Haw*.mat')); % Add wildcard to match the files you want to process.
 
-fs = 320000;
+fs = 375000;
 
 allclickDnum = [];
 alldurClickcon = [];
@@ -135,7 +135,7 @@ close(figure(5));
 
 
 %Next -plot the median values and mean spectra per encounter, perhaps on a multi plot? 
-numMeds = size(allmedianValues,2);
+numMeds = size(allmedianValues,1);
 strnMeds = num2str(numMeds);
 titlecell = {'Peak Frequency', 'Inter-click-interval','Click Duration',...
     'Peak-to-peak amplitude';'(kHz)','(ms)','(\musec)', '(dB)';...

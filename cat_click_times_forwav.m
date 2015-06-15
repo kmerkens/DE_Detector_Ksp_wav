@@ -10,7 +10,7 @@
 % start, uses hdr info. plotting section commented out.
 
 %Set sampling frequency, in Hz
-fs = 320000;
+fs = 375000;
 
 %inDir = 'E:\metadata\bigDL'; % the path to your directory of detector outputs goes here
 %inDir = 'D:\metadata\Hawaii18K_disk04';
@@ -23,6 +23,7 @@ nDurcon = [];
 peakFrcon = [];
 ppSignalcon = [];
 specClickTfcon = [];
+specNoiseTfcon = [];
 yFiltcon = [];
 
 sec2dnum = 60*60*24; % conversion factor to get from seconds to matlab datenum
@@ -32,7 +33,7 @@ for i1 = 1:length(matList)
     clickDnumTemp = [];
     % only need to load hdr and click times
     load(fullfile(inDir,matList(i1).name),'hdr','clickTimes', 'durClick', ...
-        'nDur', 'peakFr','ppSignal','specClickTf','yFilt','f')
+        'nDur', 'peakFr','ppSignal','specClickTf','specNoiseTf','yFilt','f')
     if ~isempty(clickTimes)
     % determine true click times
         clickDnumTemp = (clickTimes./sec2dnum) + hdr.start.dnum;
@@ -42,6 +43,7 @@ for i1 = 1:length(matList)
         peakFrcon = [peakFrcon; peakFr];
         ppSignalcon = [ppSignalcon; ppSignal];
         specClickTfcon = [specClickTfcon; specClickTf];
+        specNoiseTfcon = [specNoiseTfcon; specNoiseTf];
         yFiltcon = [yFiltcon; yFilt];
         % write label file:
         clickTimeRel = zeros(size(clickDnumTemp));
@@ -73,45 +75,46 @@ xlswrite([inDir,'\',choppedDir{3},'_ClicksOnlyConcatCHAR',filedate,'.xls'],click
 %%%Section added to do post-processing where all the clicks are together,
 %%%not speparted by xwav. 
 
-% %Get detectionTimes
-% inpath = 'C:\Users\Karlina.Merkens\Documents\Kogia\AnalysisLogs\HAWAII18K';
-% infile = 'HAWAII18K_Ksp_Combo_ForDetector_150310.xls';
-% %read the file into 3 matrices-- numeric, text, and raw cell array
-% [num, txt, raw] = xlsread([inpath '\' infile]);
-% %error check
-% [~,y]=size(num);
-% if y < 2;          %start and end dates not formatted as numbers
-%     h=errordlg('Please save dates in number format and click ok');
-%     uiwait(h)
-%     [num, txt, raw] = xlsread([inpath '\' infile]); %reread file
-% end  
-% excelDates = num(:,1:2);                %numeric array contains datenums
-% %convert excel datenums to matlab datenums (different pivot year)
-% matlabDates = ones(size(excelDates)).*datenum('30-Dec-1899') ...
-%     + excelDates;
-% 
-% %Use other code to do the plotting and get the medians.
-% %rename things
-% encounterTimes = matlabDates;
-% clickTimes = clickDnum;
-% guideDetector = 1;
-% ppSignal = ppSignalcon;
-% durClick = durClickcon;
-% specClickTf = specClickTfcon;
-% peakFr = peakFrcon;
-% nDur = nDurcon;
-% yFilt = yFiltcon;
-% GraphDir = 'D:\metadata\matlab_graphs';
-% 
-% 
-% [medianValues,meanSpecClicks,iciEncs] = plotClickEncounters_posthoc_150310(encounterTimes,clickTimes,ppSignal,durClick,...
-%     specClickTf,peakFr,nDur,yFilt,hdr,GraphDir,fs);
+%Get detectionTimes
+inpath = 'C:\Users\Karlina.Merkens\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\kogia';
+infile = 'VJanik_Ksima_Wild_log_150521.xls';
+%read the file into 3 matrices-- numeric, text, and raw cell array
+[num, txt, raw] = xlsread([inpath '\' infile]);
+%error check
+[~,y]=size(num);
+if y < 2;          %start and end dates not formatted as numbers
+    h=errordlg('Please save dates in number format and click ok');
+    uiwait(h)
+    [num, txt, raw] = xlsread([inpath '\' infile]); %reread file
+end  
+excelDates = num(:,1:2);                %numeric array contains datenums
+%convert excel datenums to matlab datenums (different pivot year)
+matlabDates = ones(size(excelDates)).*datenum('30-Dec-1899') ...
+    + excelDates;
+
+%Use other code to do the plotting and get the medians.
+%rename things
+encounterTimes = matlabDates;
+clickTimes = clickDnum;
+guideDetector = 1;
+ppSignal = ppSignalcon;
+durClick = durClickcon;
+specClickTf = specClickTfcon;
+specNoiseTf = specNoiseTfcon;
+peakFr = peakFrcon;
+nDur = nDurcon;
+yFilt = yFiltcon;
+GraphDir = [inDir,'\matlab_graphs'];
+
+
+[medianValues,meanSpecClicks,iciEncs] = plotClickEncounters_posthoc_150310(encounterTimes,clickTimes,ppSignal,durClick,...
+    specClickTf,specNoiseTf,peakFr,nDur,yFilt,hdr,GraphDir,f);
 
 
 %Then save everything
 save([inDir,'\',choppedDir{3},'_ClicksOnlyConcat',filedate,'.mat'],...
     'clickDnum','durClickcon','nDurcon', 'peakFrcon','ppSignalcon',...
-    'specClickTfcon','yFiltcon','f')
+    'specClickTfcon','yFiltcon','medianValues','meanSpecClicks','iciEncs','f')
 
 
 

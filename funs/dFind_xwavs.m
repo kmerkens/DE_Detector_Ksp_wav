@@ -27,6 +27,7 @@ else
             folderNames = [folderNames; char(folders(keep(fidx)).name)];
         end
     end
+    GraphDir = 0;
 
 
     % Pull out x.wav files from all folders, combine full paths into one long list
@@ -44,8 +45,6 @@ else
         end
         xwavNames = [xwavNames;char(xwavList)];
     end
-    MetaDir = ([baseDir,'metadata']);
-    GraphDir = ([MetaDir,'\matlab_graphs']);
 end
 
 % %parse out all dates and times for the start of each xwav file

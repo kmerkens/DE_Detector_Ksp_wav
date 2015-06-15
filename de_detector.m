@@ -36,8 +36,8 @@ tfFullFile = [];
 % Location of base directory containing directories of files to be analyzed
 %baseDir = 'I:\GofMXArraySpRecs\Sb';
 %baseDir = 'D:\';
-%baseDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\';
-baseDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\OtherRecordings\CRC-Kona\';
+baseDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\';
+%baseDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\OtherRecordings\CRC-Kona\';
 
 % Name of the deployment. This should be the first few characters in the 
 % directory(ies) you want to look in you want to look at. For now,

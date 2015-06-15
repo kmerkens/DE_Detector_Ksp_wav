@@ -1,6 +1,6 @@
 
 function plotClickEncounters_150310(encounterTimes,clickTimes,ppSignal,...
-    durClick,specClickTf,peakFr,nDur,yFilt,hdr,GraphDir,f)
+    durClick,specClickTf,specNoiseTf,peakFr,peakFrNew,nDur,yFilt,hdr,GraphDir,f)
 %Generates plots of clicks according to encounter start/end times, as long
 %as the encounter is contained within one .xwav. (so, it's mostly useless),
 %and guideDetector has been selected in de_detector.m
@@ -54,6 +54,7 @@ for ne = 1:numEnc
         medianValue(3) = prctile(durClick(clicksThisEnc),50);%calculate median duration
         medianValue(4) = prctile(ppSignal(clicksThisEnc),50);%calculate median inter-pulse interval
         %medianValue(5) = prctile(F0Sel,50);%calculate median center frequency
+        medianValue(5) = prctile(peakFrNew(clicksThisEnc),50);%calculate median peak frequency from narrow band
         clickCount = sum(clicksThisEnc);%count number of clicks in analysis
         maxRL = max(ppSignal(clicksThisEnc));
 
@@ -64,18 +65,27 @@ for ne = 1:numEnc
         specSorted=[];
         for c=1:length(b)
             thisspec = cell2mat(specClickTf(b(c),:));
-            specSorted(c,:)=thisspec;
+            thisnoise = cell2mat(specNoiseTf(b(c),:));
+            specSorted(c,:)= thisspec;
+            noiseSorted(c,:) = thisnoise;
         end
         specSorted=specSorted.';
+        noiseSorted = noiseSorted.';
 
         N=size(specSorted,1)*2;
-        %f=0:(fs/2000)/(N/2-1):fs/2000;%This should be loaded, don't
+        %f=0:(fs/2000)/(N/2-1):fs/2000; %This should be loaded, don't
         %recalculate it!
         datarow=size(specSorted,2);
 
         %calculate mean spectra for click and noise
         meanSpecClick=mean(specSorted');
-        %meanSpecNoise=mean(specNoiseSel);
+        meanSpecNoise=mean(noiseSorted');
+        
+        %%%%Simone now calculates mean in the linear world. E.g.:
+        %spectraLinear = 10.^(spectraDB/20);
+        %meanLinear = mean(spectraLinear);
+        %meanDB = 20*log10(meanLinear);
+        %%%%%
 
 %         sep = strfind(pathstr,'\');
 %         disk = pathstr(sep(2)+1:length(pathstr));
@@ -85,11 +95,12 @@ for ne = 1:numEnc
 
         subplot(2, 2, 1);
         vec=0:1:160;
-        hist(peakFr(clicksThisEnc),vec)
+        hist(peakFrNew(clicksThisEnc),vec)
         xlim([0 160])
         xlabel('peak frequency (kHz)')
         ylabel('counts')
         text(0.05,0.9,['pfr =',num2str(medianValue(1)),' kHz'],'Unit','normalized')
+        text(0.08,0.9,['pfr (narrow) =',num2str(medianValue(5)),' kHz'],'Unit','normalized'
         %text(0.5,0.8,['cfr =',num2str(medianValue(5)),' kHz'],'Unit','normalized')
 
         subplot(2,2,2)
@@ -103,13 +114,15 @@ for ne = 1:numEnc
 
         subplot(2,2,3)
         plot(f,meanSpecClick,'LineWidth',2), hold on
-        %plot(f,meanSpecNoise,':k','LineWidth',2), hold off
+        plot(f,meanSpecNoise,':k','LineWidth',2), hold off
         xlabel('Frequency (kHz)'), ylabel('Normalized amplitude (dB)')
-        ylim([50 150])
+        %ylim([50 150])
+        ylim([100 180])
         xlim([0 160])
+        line([80 80], [50 1500],'Color','r','LineWidth',1);
         title(['Mean click spectra, n=',num2str(size(specSorted,2))],'FontWeight','bold')
         text(0.5,0.9,['ppRL =',num2str(medianValue(4))],'Unit','normalized')
-
+        
         subplot(2,2,4)
         imagesc(1:datarow, f, specSorted); axis xy; colormap(gray)
         xlabel('Click number'), ylabel('Frequency (kHz)')
@@ -123,10 +136,13 @@ for ne = 1:numEnc
         
         figure
         plot(f,meanSpecClick,'LineWidth',2), hold on
-        %plot(f,meanSpecNoise,':k','LineWidth',2), hold off
+        plot(f,meanSpecNoise,':k','LineWidth',2), hold off
         xlabel('Frequency (kHz)'), ylabel('Normalized amplitude (dB)')
-        ylim([50 150])
+        %ylim([50 150])
+        ylim([100 180])
         xlim([0 160])
+        line([80 80], [50 1500],'Color','r','LineWidth',1);
+        line([120 120], [50 1500],'Color','r','LineWidth',1,'LineStyle',':');
         title(['Mean click spectra, n=',num2str(size(specSorted,2))],'FontWeight','bold')
         text(0.05,0.9,['pfr =',num2str(medianValue(1)),' kHz'],'Unit','normalized')
 
