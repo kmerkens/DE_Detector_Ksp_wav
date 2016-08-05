@@ -139,15 +139,15 @@ for ne = 1:numEnc
         plot(f,meanSpecNoise,':k','LineWidth',1)
         %plot(f,meanSpecNoise,':k','LineWidth',2), hold off
         xlabel('Frequency (kHz)'), ylabel('Normalized amplitude (dB)')
-        ylim([80 115])
+        %ylim([0 200])
         xlim([0 f(end)])
-        line([120 120], [50 1500],'Color','r','LineWidth',1);
+        %line([120 120], [50 1500],'Color','r','LineWidth',1);
         title(['Mean click spectra, n=',num2str(size(specSorted,2))],'FontWeight','bold')
         text(0.5,0.9,['ppRL =',num2str(medianValue(4))],'Unit','normalized')
 
         subplot(2,2,4)
         imagesc(1:datarow, f, specSorted); axis xy; colormap(gray)
-        line([0 datarow+0.5],[120 120],'Color','r','LineWidth',1);
+        %line([0 datarow+0.5],[120 120],'Color','r','LineWidth',1);
         xlabel('Click number'), ylabel('Frequency (kHz)')
         title(['Clicks sorted by peak frequency'],'FontWeight','bold')
 
@@ -162,7 +162,7 @@ for ne = 1:numEnc
         plot(f,meanSpecNoise,':k','LineWidth',1)
         %plot(f,meanSpecNoise,':k','LineWidth',2), hold off
         xlabel('Frequency (kHz)'), ylabel('Normalized amplitude (dB)')
-        ylim([80 115])
+       % ylim([80 115])
         xlim([0 f(end)])
         title(['Mean click spectra, n=',num2str(size(specSorted,2))],'FontWeight','bold')
         text(0.05,0.9,['pfr =',num2str(medianValue(1)),' kHz'],'Unit','normalized')

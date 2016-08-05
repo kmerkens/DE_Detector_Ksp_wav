@@ -10,13 +10,15 @@
 % start, uses hdr info. plotting section commented out.
 
 %Set sampling frequency, in Hz
-fs = 375000;
+%fs = 375000; %V Janik
+fs = 500000; %D Mann, E Jacobson
+%fs = 480000; %T Yack Dalls
 
 %inDir = 'E:\metadata\bigDL'; % the path to your directory of detector outputs goes here
 %inDir = 'D:\metadata\Hawaii18K_disk04';
-inDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\metadata\kogia';
+inDir = 'C:\Users\Karlina.Merkens\Documents\Porpoise\OtherRecordings\EJacobson_Harbor_wild\metadata\harbor';
 %inDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\320_detectctor_dir\metadata\320_Detector_Test';
-matList = dir(fullfile(inDir,'kogia*.mat')); % Add wildcard to match the files you want to process.
+matList = dir(fullfile(inDir,'harbor*.mat')); % Add wildcard to match the files you want to process.
 clickDnum = [];
 durClickcon = [];
 nDurcon = [];
@@ -76,8 +78,8 @@ xlswrite([inDir,'\',choppedDir{3},'_ClicksOnlyConcatCHAR',filedate,'.xls'],click
 %%%not speparted by xwav. 
 
 %Get detectionTimes
-inpath = 'C:\Users\Karlina.Merkens\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\kogia';
-infile = 'VJanik_Ksima_Wild_log_150521.xls';
+inpath = 'C:\Users\Karlina.Merkens\Documents\Porpoise\OtherRecordings\EJacobson_Harbor_wild\harbor';
+infile = 'EJacobsen_harbor_wild_log_150702.xls';
 %read the file into 3 matrices-- numeric, text, and raw cell array
 [num, txt, raw] = xlsread([inpath '\' infile]);
 %error check

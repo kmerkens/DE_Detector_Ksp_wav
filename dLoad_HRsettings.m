@@ -3,9 +3,9 @@ function parametersHR = dLoad_HRsettings
 %%% Filter and FFT params %%
 %parametersHR.bpRanges = [50000,99000]; % Bandpass filter params in Hz [min,max]
 %parametersHR.bpRanges = [5000,159000]; % For Kogia on 320
-%parametersHR.bpRanges = [50000,200000]; % For Kogia on 500
-parametersHR.bpRanges = [1000,187000]; % For Kogia on 375
-%parametersHR.bpRanges = [5000,200000]; % For dalls on 480
+%parametersHR.bpRanges = [5000,200000]; % For Kogia on 500 (DMann - avoiding noise)
+%parametersHR.bpRanges = [1000,187000]; % For Kogia on 375
+parametersHR.bpRanges = [5000,200000]; % For dalls on 480 T Yack
 %parametersHR.bpRanges = [5000,143500]; %For Kogia on 288
 
 parametersHR.frameLengthUs = 1200; % For fft computation
@@ -17,9 +17,9 @@ parametersHR.clipThreshold = .98;%  Normalized clipping threshold btwn 0 and 1. 
 
 %%% Recieved level threshold params %%%
 %parametersHR.ppThresh = 100;% minimum  RL threshold - dB peak to peak.
-%parametersHR.ppThresh = 40;% minimum  RL threshold - dB peak to peak. 
+parametersHR.ppThresh = 40;% minimum  RL threshold - dB peak to peak. 
 %Decreased for DMann wav, particularly because no tf available. 
-parametersHR.ppThresh = 20; %decresed further for V. Janik data.
+%parametersHR.ppThresh = 20; %decresed further for V. Janik data.
 
 %parametersHR.countThresh = 3500; % Keep consistent with Lo-res for predictability.
 % Can be higher than low res, but not lower!
@@ -27,9 +27,10 @@ parametersHR.ppThresh = 20; %decresed further for V. Janik data.
 %   dBs = 10*log10(abs(fft(counts *2^14))) - 10*log10(fs/(length(fftWindow)))...
 %            + transfer function
 % note: array uses 2^15
-%parametersHR.countThresh = 20000; %Set high for D. Mann wav files. 
-parametersHR.countThresh = 500; %Set lower for V. Janik wav files. 
-%parametersHR.countThresh = 800000; %Set very hi for dalls wav files. 
+%parametersHR.countThresh = 60000; %Set high for D. Mann wav files. 
+%parametersHR.countThresh = 500; %Set lower for V. Janik wav files. 
+%parametersHR.countThresh = 1000000; %Set very hi for dalls wav files. 
+parametersHR.countThresh = 750000; %set high for EJ Harbor porpoise
 
 
 %%% Envelope params %%%
@@ -41,16 +42,16 @@ parametersHR.dEvLims = [-.4,.9];  % [min,max] Envelope energy distribution compa
 % dEnv ~= 0 , but still allow a range...
 %parametersHR.delphClickDurLims = [5,30];% [min,max] duration in microsec 
 % allowed for high energy envelope of click
-%parametersHR.delphClickDurLims = [5,100];%increased for wav
-parametersHR.delphClickDurLims = [5,100];%lowered min for dalls wav
+parametersHR.delphClickDurLims = [5,100];%increased for wav
+%parametersHR.delphClickDurLims = [5,100];%lowered min for dalls wav
 
 
 %%% Other pruning params %%%
 %parametersHR.cutPeakBelowKHz = 80; % discard click if peak frequency below X kHz
-%parametersHR.cutPeakBelowKHz = 100; %% For Kogia on 500
-parametersHR.cutPeakBelowKHz = 110; %% For dalls on 480
+parametersHR.cutPeakBelowKHz = 100; %% For Kogia on 500 (DMann)
+%parametersHR.cutPeakBelowKHz = 110; %% For dalls on 480
 %parametersHR.cutPeakAboveKHz = 99.9; % discard click if peak frequency above Y kHz 
-parametersHR.cutPeakAboveKHz = 190;%% For Kogia on 500
+parametersHR.cutPeakAboveKHz = 150;%% For Kogia on 500 (DMann)
 parametersHR.minClick_us = 16;% Minimum duration of a click in us 
 parametersHR.maxClick_us = 1000; % Max duration of a click including echos
 %parametersHR.maxNeighbor = 1; % max time in seconds allowed between neighboring 
@@ -59,11 +60,12 @@ parametersHR.maxClick_us = 1000; % Max duration of a click including echos
 % clicks are likely false positives
 parametersHR.maxNeighbor = 2; %Increased, to get faint kogia detections. 
 
-parametersHR.mergeThr = 50;% min gap between energy peaks in us. Anything less
+%parametersHR.mergeThr = 50;% min gap between energy peaks in us. Anything less
 % will be merged into one detection the beginning of the next is fewer
 % samples than this, the signals will be merged.
+parametersHR.mergeThr = 20;%reduced to try to get more shorter clicks in echo bouts. 
 
-% %%%Not necessary for 320 Khz data
+% %%%Not necessary for wav data
 % parametersHR.localminbottom = 63; %Frequency above which will be checked 
 % %for local min
 % parametersHR.localmintop = 90; %Frequency below which will be checked for

@@ -12,7 +12,7 @@ else
 	dataSmooth = fastsmooth(abs(bpDataHi),15);
 end
 
-thresh = prctile(dataSmooth,70);
+thresh = prctile(dataSmooth,90);
 for itr = 1:length(sStarts)
     rangeVec = sStarts(itr):sStops(itr);
     % Discard smooth to make an envelope

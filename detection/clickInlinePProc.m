@@ -158,30 +158,30 @@ if size(clickTimesPruned,1)>1
     delFlag(closeStarts+1,:) = 0;
 end
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%%%Added 150318 KPM - remove echoes from captive recordings.  Lock out
-% %%%%period 0.03 seconds from first click detection of set. 
-% %delFlag = ones(size(clickTimes(:,1),1));
-% itre = 1;
-% %lock = 0.03;
-% step = 0.05; %gap to look for to indicate new click started
-% while itre < size(clickTimes,1)
-%     thisclick = clickTimes(itre(:,1));
-%     difftoclick = clickTimes(:,1) - thisclick;
-%     echoes = find(difftoclick <= step & difftoclick > 0);
-%     delFlag(echoes,1) = 0; %delete these
-%     if isempty(echoes)
-%         nextclick = echoes +1;
-%     else
-%         nextclick = echoes(end)+1;
-%     end
-%     if ~isempty(nextclick)
-%         itre = nextclick(1);
-%     else
-%         itre = size(clickTimes,1);
-%     end
-% end
-%     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%Added 150318 KPM - remove echoes from captive recordings.  Lock out
+%%%%period 0.03 seconds from first click detection of set. 
+%delFlag = ones(size(clickTimes(:,1),1));
+itre = 1;
+%lock = 0.03;
+step = 0.05; %gap to look for to indicate new click started
+while itre < size(clickTimes,1)
+    thisclick = clickTimes(itre(:,1));
+    difftoclick = clickTimes(:,1) - thisclick;
+    echoes = find(difftoclick <= step & difftoclick > 0);
+    delFlag(echoes,1) = 0; %delete these
+    if isempty(echoes)
+        nextclick = itre +1;
+    else
+        nextclick = echoes(end)+1;
+    end
+    if ~isempty(nextclick)
+        itre = nextclick(1);
+    else
+        itre = size(clickTimes,1);
+    end
+end
+    
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
