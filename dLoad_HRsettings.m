@@ -3,15 +3,9 @@ function parametersHR = dLoad_HRsettings
 %%% Filter and FFT params %%
 %parametersHR.bpRanges = [50000,99000]; % Bandpass filter params in Hz [min,max]
 %parametersHR.bpRanges = [5000,159000]; % For Kogia on 320
-<<<<<<< HEAD
 % parametersHR.bpRanges = [10000,180000]; % For Kogia on 500 (DMann - avoiding noise)
 %parametersHR.bpRanges = [1000,187000]; % For Kogia on 375
 %parametersHR.bpRanges = [5000,200000]; % For dalls on 480 T Yack
-=======
-%parametersHR.bpRanges = [5000,200000]; % For Kogia on 500 (DMann - avoiding noise)
-%parametersHR.bpRanges = [1000,187000]; % For Kogia on 375
-parametersHR.bpRanges = [5000,200000]; % For dalls on 480 T Yack
->>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
 %parametersHR.bpRanges = [5000,143500]; %For Kogia on 288
 parametersHR.bpRanges = [1000,190000]; % For Ksima on 384 CARB (CRP)
 
@@ -23,12 +17,8 @@ parametersHR.clipThreshold = .98;%  Normalized clipping threshold btwn 0 and 1. 
 
 
 %%% Recieved level threshold params %%%
-%parametersHR.ppThresh = 100;% minimum  RL threshold - dB peak to peak.
-<<<<<<< HEAD
-%parametersHR.ppThresh = 20;% minimum  RL threshold - dB peak to peak. 
-=======
+%parametersHR.ppThresh = 100;% minimum  RL threshold - dB peak to peak. 
 parametersHR.ppThresh = 40;% minimum  RL threshold - dB peak to peak. 
->>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
 %Decreased for DMann wav, particularly because no tf available. 
 %parametersHR.ppThresh = 20; %decresed further for V. Janik data.
 
@@ -38,18 +28,12 @@ parametersHR.ppThresh = 40;% minimum  RL threshold - dB peak to peak.
 %   dBs = 10*log10(abs(fft(counts *2^14))) - 10*log10(fs/(length(fftWindow)))...
 %            + transfer function
 % note: array uses 2^15
-<<<<<<< HEAD
+
 % parametersHR.countThresh = 60000; %Set high for D. Mann wav files. 
 %parametersHR.countThresh = 500; %Set lower for V. Janik wav files. 
 %parametersHR.countThresh = 1000000; %Set very hi for dalls wav files. 
 %parametersHR.countThresh = 500000; %set high for EJ Harbor porpoise
 parametersHR.countThresh = 2500; %Set for CARB ksima files. 
-=======
-%parametersHR.countThresh = 60000; %Set high for D. Mann wav files. 
-%parametersHR.countThresh = 500; %Set lower for V. Janik wav files. 
-%parametersHR.countThresh = 1000000; %Set very hi for dalls wav files. 
-parametersHR.countThresh = 750000; %set high for EJ Harbor porpoise
->>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
 
 
 %%% Envelope params %%%
@@ -93,18 +77,7 @@ parametersHR.maxNeighbor = 2; %Increased, to get faint kogia detections.
 % will be merged into one detection the beginning of the next is fewer
 % samples than this, the signals will be merged.
 parametersHR.mergeThr = 20;%reduced to try to get more shorter clicks in echo bouts. 
-<<<<<<< HEAD
-=======
 
-% %%%Not necessary for wav data
-% parametersHR.localminbottom = 63; %Frequency above which will be checked 
-% %for local min
-% parametersHR.localmintop = 90; %Frequency below which will be checked for
-% %local min.
-% parametersHR.localminThr = 68; %Frequency above which a local minimum must
-% %exist in order to be thrown out.  If the min is below, the click will be
-% %kept
->>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
 
 
 % if you're using wav files that have a time stamp in the name, put a

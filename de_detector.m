@@ -40,13 +40,8 @@ tfFullFile = [];
 % Location of base directory containing directories of files to be analyzed
 %baseDir = 'I:\GofMXArraySpRecs\Sb';
 %baseDir = 'D:\';
-<<<<<<< HEAD
 % baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\';
 % baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\DMann_Ksima_captive\';
-=======
-baseDir = 'C:\Users\Karlina.Merkens\Documents\Porpoise\OtherRecordings\EJacobson_Harbor_wild\';
->>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
-%baseDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\OtherRecordings\CRC-Kona\';
 baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\';
 
 
@@ -55,12 +50,10 @@ baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_
 % directory hierarchy is expected to be: basedir>depl*>*.x.wav
 % TODO: implement recursive directory search for more flexibility.
 %depl = 'Hawaii';
-<<<<<<< HEAD
+
 depl = 'kogia';
 %depl = 'dalls';
-=======
-depl = 'harbor';
->>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
+%depl = 'harbor';
 
 
 % Set flags indicating which routines to run. 

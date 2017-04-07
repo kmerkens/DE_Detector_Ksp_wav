@@ -231,11 +231,7 @@ for ne = 1:numEnc
         plot(f,meanSpecNoise,':k','LineWidth',1)
         %plot(f,meanSpecNoise,':k','LineWidth',2), hold off
         xlabel('Frequency (kHz)'), ylabel('Normalized amplitude (dB)')
-<<<<<<< HEAD
         ylim([70 130])
-=======
-        %ylim([0 200])
->>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
         xlim([0 f(end)])
         %line([120 120], [50 1500],'Color','r','LineWidth',1);
         title(['Mean click spectra, n=',num2str(size(specSorted,2))],'FontWeight','bold')
@@ -276,11 +272,7 @@ for ne = 1:numEnc
         plot(f,meanSpecNoise,':k','LineWidth',1)
         %plot(f,meanSpecNoise,':k','LineWidth',2), hold off
         xlabel('Frequency (kHz)'), ylabel('Normalized amplitude (dB)')
-<<<<<<< HEAD
-       ylim([70 130])
-=======
-       % ylim([80 115])
->>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
+        ylim([70 130])
         xlim([0 f(end)])
         title(['Mean click spectra, n=',num2str(size(specSorted,2))],'FontWeight','bold')
         text(0.05,0.9,['pfr =',num2str(medianValue(1)),' kHz'],'Unit','normalized')
