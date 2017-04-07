@@ -18,6 +18,9 @@ function de_detector
 %   dLoad_HRsettings : settings for hi res detector
 % See those files for info on settings.
 
+% NOTE: If this is a captive recording, there is a "lockout" period that
+% can be set in clickInlinePProc.m, line 161 to remove echoes
+
 % clearvars
 close all
 fclose all;
@@ -28,6 +31,7 @@ tic
 %tfFullFile = 'E:\Code\TF_files\604_100614\604_100614_invSensit.tf';
 %tfFullFile = 'H:\Cetacean Research Program\HARP\TF_files\695_121203_invSensit.tf';
 %tfFullFile = 'C:\Users\Karlina.Merkens\Documents\HARPTFfiles\600_series\692_121119\692_121119_invSensit.tf';
+%tfFullFile = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\CARB_TF.tf';
 
 %Note, if you don't have a tranfer function just use:
 tfFullFile = [];
@@ -36,8 +40,11 @@ tfFullFile = [];
 % Location of base directory containing directories of files to be analyzed
 %baseDir = 'I:\GofMXArraySpRecs\Sb';
 %baseDir = 'D:\';
-baseDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\';
+% baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\';
+% baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\DMann_Ksima_captive\';
 %baseDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\OtherRecordings\CRC-Kona\';
+baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\';
+
 
 % Name of the deployment. This should be the first few characters in the 
 % directory(ies) you want to look in you want to look at. For now,
@@ -45,6 +52,7 @@ baseDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\OtherRecordings\VJanik_Ksima
 % TODO: implement recursive directory search for more flexibility.
 %depl = 'Hawaii';
 depl = 'kogia';
+%depl = 'dalls';
 
 
 % Set flags indicating which routines to run. 
@@ -57,7 +65,7 @@ inDisk = fileparts(baseDir(1:3));
 
 % Build list of (x)wav names in the base directory.
 % Right now only wav and xwav files are looked for.
-guideDetector = 0; %1 if using xls sheet to guide detection, 0 to run on all files in drive
+guideDetector = 1; %1 if using xls sheet to guide detection, 0 to run on all files in drive
 
 [detFiles,encounterTimes,GraphDir]= dFind_xwavs(baseDir,depl,guideDetector); 
 

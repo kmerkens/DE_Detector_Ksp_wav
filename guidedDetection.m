@@ -21,8 +21,18 @@ function [xwavNames,matlabDates,GraphDir] = guidedDetection(baseDir)
 %     return
 % end
 
-inpath = 'C:\Users\Karlina.Merkens\Documents\Kogia\AnalysisLogs\HAWAII18K';
-infile = 'HAWAII18K_Ksp_Combo_ForDetector_150310.xls';
+% inpath = 'C:\Users\Karlina.Merkens\Documents\Kogia\AnalysisLogs\HAWAII18K';
+% infile = 'HAWAII18K_Ksp_Combo_ForDetector_150310.xls';
+
+% inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\DMann_Ksima_captive\kogia';
+% infile = 'DMann_Ksima_captive_log_150626.xls';
+
+% inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\kogia';
+% infile = 'VJanik_Ksima_Wild_log_150521.xls';
+
+inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\kogia';
+infile = 'Ksima_guided_detector_160601.xls';
+
 
 %read the file into 3 matrices-- numeric, text, and raw cell array
 [num, txt, raw] = xlsread([inpath '\' infile]);
@@ -52,7 +62,9 @@ mkdir(GraphDir)
 input_file = txt{2,1};
 under = strfind(input_file, '_');
 %depl = input_file(1:under(1)-1);
-depl = 'Hawaii18K';
+%depl = 'Hawaii18K';
+depl = 'kogia';
+
 
 %find folders on disk and remove those that don't belong to data
 folders = dir(BaseDir);
@@ -93,9 +105,9 @@ ds = size(allxwavNames,2);
 startFile = [];
 for m = 1:size(allxwavNames,1)
     file = allxwavNames(m,:);
-    dateFile = [str2num(['20',file(ds-18:ds-17)]),str2num(file(ds-16:ds-15)),...
-        str2num(file(ds-14:ds-13)),str2num(file(ds-11:ds-10)),...
-        str2num(file(ds-9:ds-8)),str2num(file(ds-7:ds-6))];
+    dateFile = [str2num(file(ds-18:ds-15)),str2num(file(ds-14:ds-13)),...
+        str2num(file(ds-12:ds-11)),str2num(file(ds-9:ds-8)),...
+        str2num(file(ds-7:ds-6)),str2num(file(ds-5:ds-4))];
     startFile = [startFile; datenum(dateFile)];
 end
 
@@ -106,19 +118,26 @@ for i = 1:size(matlabDates,1)
     start = matlabDates(i,1);
     fileIdx = find(startFile<start);
     startIdx = find(startFile == startFile(fileIdx(end))); %check for multiple matlab files per x.wav
+   
+    numfiles = size(allxwavNames,1);
+    if startIdx == numfiles;
+        detxwavNames = allxwavNames(startIdx,:);
+        xwavNames = [xwavNames;detxwavNames];
+        continue
+    end
     
     fend = matlabDates(i,2);
     fileIdx = find(startFile>fend);
-    if isempty(fileIdx)
-        filetext = fullfile(BaseDir,'click_params', (sprintf('%s_%s', depl,datestr(matlabDates(i,1),30),'.txt')));
-        fid = fopen(filetext,'w+');
-        fprintf(fid,'%s','End time possibly on next disk');
-        fclose(fid);
-        
-        if startIdx(end)<length(startFile)
-            fileIdx = length(startFile)+1;
-        end
-    end
+%     if isempty(fileIdx)
+%         filetext = fullfile(BaseDir,'click_params', (sprintf('%s_%s', depl,datestr(matlabDates(i,1),30),'.txt')));
+%         fid = fopen(filetext,'w+');
+%         fprintf(fid,'%s','End time possibly on next disk');
+%         fclose(fid);
+%         
+%         if startIdx(end)<length(startFile)
+%             fileIdx = length(startFile)+1;
+%         end
+%     end
     
     if ~isempty(fileIdx)
         endIdx = find(startFile == startFile(fileIdx(1)-1));%check for multiple matlab files per x.wav
@@ -128,6 +147,8 @@ for i = 1:size(matlabDates,1)
         detxwavNames = allxwavNames(fIdx,:);
         xwavNames = [xwavNames; detxwavNames];       
     end
+    
+    
 end
 
 xwavNames = unique(xwavNames,'rows');

@@ -2,41 +2,67 @@
 %overall summary statistics and make plots of the detections from the
 %entire deployment
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%Load data
+% inDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\DetectorOutput\Hawaii18';
+% GraphDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\DetectorOutput\Hawaii18\Final_histograms';
+% inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\metadata\kogia';
+% GraphDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\metadata\kogia\matlab_graphs';
+% inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\DMann_Ksima_captive\metadata\kogia';
+% GraphDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\DMann_Ksima_captive\metadata\kogia\matlab_graphs';
+% inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\kogia\LowFreqTesting\metadata_100-119PeakFr\kogia';
+% GraphDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\kogia\LowFreqTesting\metadata_100-119PeakFr\kogia\matlab_graphs';
+inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\metadata_170327_buzz\kogia';
+GraphDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\metadata_170327_buzz\kogia\matlab_graphs';
 
 
-inDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\DetectorOutput\VJanik_kogia';
-GraphDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\DetectorOutput\VJanik_kogia\Final_histograms';
+% matList = dir(fullfile(inDir,'VJanik*.mat')); % Add wildcard to match the files you want to process.
+% matList = dir(fullfile(inDir,'DMann*.mat')); % Add wildcard to match the files you want to process.
+matList = dir(fullfile(inDir,'NOAA*.mat')); % Add wildcard to match the files you want to process.
 
-matList = dir(fullfile(inDir,'Haw*.mat')); % Add wildcard to match the files you want to process.
-
-fs = 375000;
+% fs = 375000; %Janik
+% fs = 500000; %Mann
+fs = 384000; %CARB
 
 allclickDnum = [];
 alldurClickcon = [];
 allnDurcon = [];
+allndur95con = [];
+allndur95Tailscon = [];
+allbw3dbcon = [];
+allbw10dbcon = [];
 allpeakFrcon = [];
 allppSignalcon = [];
 allspecClickTfcon = [];
+allspecNoiseTfcon = [];
 allyFiltcon = [];
 allmedianValues = [];
 allmeanSpecClicks = [];
+allmeanSpecNoises = [];
 alliciEncs = [];
 
-
+%%Concatenate data from all .mat files
 for i1 = 1:length(matList)
     load(fullfile(inDir,matList(i1).name), 'clickDnum','durClickcon',...
-        'nDurcon', 'peakFrcon','ppSignalcon',...
-        'specClickTfcon','yFiltcon','medianValues','meanSpecClicks','iciEncs')
+        'nDurcon','ndur95con','ndur95Tailscon','bw3dbcon','bw10dbcon', 'peakFrcon','ppSignalcon','specClickTfcon',...
+        'specNoiseTfcon','yFiltcon','medianValues','meanSpecClicks','meanSpecNoises',...
+        'iciEncs','f')
     
     allclickDnum = [allclickDnum;clickDnum]; %save to one vector
     alldurClickcon = [alldurClickcon;durClickcon];
     allnDurcon = [allnDurcon; nDurcon];
+    allndur95con = [allndur95con; ndur95con];
+    allndur95Tailscon = [allndur95Tailscon; ndur95Tailscon];
+    allbw3dbcon = [allbw3dbcon; bw3dbcon(:,3)];
+    allbw10dbcon = [allbw10dbcon; bw10dbcon(:,3)];
     allpeakFrcon = [allpeakFrcon; peakFrcon];
     allppSignalcon = [allppSignalcon; ppSignalcon];
     allspecClickTfcon = [allspecClickTfcon; specClickTfcon];
+    allspecNoiseTfcon = [allspecNoiseTfcon; specNoiseTfcon];
     allyFiltcon = [allyFiltcon; yFiltcon];
     allmedianValues = [allmedianValues;medianValues];
-    allmeanSpecClicks = [allmeanSpecClicks;meanSpecClicks];  
+    allmeanSpecClicks = [allmeanSpecClicks;meanSpecClicks];
+    allmeanSpecNoises = [allmeanSpecNoises;meanSpecNoises];
     alliciEncs = [alliciEncs;iciEncs];
      
 end
@@ -48,112 +74,212 @@ strnumenc = num2str(numenc);
 
 filedate = datestr(now, 'yymmdd');
 
-save([inDir,'_AllParamsConcat',filedate,'.mat'],...
-'allclickDnum','alldurClickcon','allnDurcon','allpeakFrcon',...
-'allppSignalcon','allspecClickTfcon','allyFiltcon','allmedianValues',...
-'allmeanSpecClicks')
+save([inDir,'\AllParamsConcat',filedate,'.mat'],...
+'f','allclickDnum','alldurClickcon','allndur95con','allndur95Tailscon',...
+'allbw3dbcon','allbw10dbcon','allnDurcon','allpeakFrcon',...
+'allppSignalcon','allspecClickTfcon','allspecNoiseTfcon','allyFiltcon',...
+'allmedianValues','allmeanSpecClicks','allmeanSpecNoises','alliciEncs')
 
+%%%%
+%Want to save everything in a .csv format? Then call this script:
+saveDetecorOutput_170329(inDir,f,allndur95con,allbw3dbcon,...
+    allbw10dbcon,allpeakFrcon,allspecClickTfcon,allspecNoiseTfcon,...
+    alliciEncs)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Calculate 25th, median and 75th percentiles for median values, to give some sense
+%of width of the histogram spans. 
+Q1peakFr = prctile(allpeakFrcon,25);
+Q1iciEncs = prctile(alliciEncs,25);
+Q1durClick = prctile(alldurClickcon,25);
+Q1ndur95 = prctile(allndur95con,25);
+Q1ndur95Tails = prctile(allndur95Tailscon,25);
+Q1bw3db = prctile(allbw3dbcon,25);
+Q1bw10db = prctile(allbw10dbcon,25);
+Q1nDur = prctile(allnDurcon,25);
+Q1ppSig = prctile(allppSignalcon,25);
+
+medpeakFr = prctile(allpeakFrcon,50);
+mediciEncs = prctile(alliciEncs,50);
+meddurClick = prctile(alldurClickcon,50);
+medndur95 = prctile(allndur95con,50);
+medndur95Tails = prctile(allndur95Tailscon,50);
+medbw3db = prctile(allbw3dbcon,50);
+medbw10db = prctile(allbw10dbcon,50);
+mednDur = prctile(allnDurcon,50);
+medppSig = prctile(allppSignalcon,50);
+
+Q3peakFr = prctile(allpeakFrcon,75);
+Q3iciEncs = prctile(alliciEncs,75);
+Q3durClick = prctile(alldurClickcon,75);
+Q3ndur95 = prctile(allndur95con,75);
+Q3ndur95Tails = prctile(allndur95Tailscon,75);
+Q3bw3db = prctile(allbw3dbcon,75);
+Q3bw10db = prctile(allbw10dbcon,75);
+Q3nDur = prctile(allnDurcon,75);
+Q3ppSig = prctile(allppSignalcon,75);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Make plots and save them
 
-%Click duration
-meddurClick = prctile(alldurClickcon,50);
-figure(1)
-hist(alldurClickcon,50)
-line([meddurClick meddurClick], [0 400],'Color','r','LineWidth',3);
-text(0.5,0.9,['median = ',num2str(meddurClick),' \musec'],'Unit','normalized','Color','r')
-ylim([0 400])
-title(['Histgram of all click durations (\musec) (n = ',strnclicks,')']);
+%Click duration - old method
+subplot(2,1,1)
+vec=0:10:400;
+hist(alldurClickcon,vec)
+xlim([0 400])
+line([meddurClick meddurClick], [0 200],'Color','r','LineWidth',1);
+line([Q1durClick Q1durClick], [0 200],'Color','r','LineWidth',1,'LineStyle',':');
+line([Q3durClick Q3durClick], [0 200],'Color','r','LineWidth',1,'LineStyle',':');
+text(0.5,0.9,['25th pctile = ',num2str(Q1durClick),' \musec'],'Unit','normalized','Color','r')
+text(0.5,0.8,['median = ',num2str(meddurClick),' \musec'],'Unit','normalized','Color','r')
+text(0.5,0.7,['75th pctile = ',num2str(Q3durClick),' \musec'],'Unit','normalized','Color','r')
+ylim([0 120])
+title(['Histgram of all click durations - old (\musec) (n = ',strnclicks,')']);
 ylabel('Counts')
 xlabel('Time (\musec)')
-filename = fullfile(GraphDir,['Click_duration_',filedate]);
-saveas(gca, filename, 'tif')
-close(figure(1));
 
-%nDur = Envelope duration
-mednDur = prctile(allnDurcon,50);
-figure(2)
-hist(allnDurcon,25)
-line([mednDur mednDur], [0 1050],'Color','r','LineWidth',3);
-text(0.5,0.9,['median = ',num2str(mednDur),' \musec'],'Unit','normalized','Color','r')
-ylim([0 1050])
-title(['Histgram of all click envelope durations (us) (n = ',strnclicks,')']);
-ylabel('Counts')
+%nDur95 = Envelope duration 95%
+subplot(2,1,2)
+hist(allndur95con,vec)
+xlim([0 400])
+line([medndur95 medndur95], [0 200],'Color','r','LineWidth',1);
+line([Q1ndur95 Q1ndur95], [0 200],'Color','r','LineWidth',1,'LineStyle',':');
+line([Q3ndur95 Q3ndur95], [0 200],'Color','r','LineWidth',1,'LineStyle',':');
+text(0.1,0.9,['25th pctile = ',num2str(Q1ndur95),' \musec'],'Unit','normalized','Color','r')
+text(0.1,0.8,['median = ',num2str(medndur95),' \musec'],'Unit','normalized','Color','r')
+text(0.1,0.7,['75th pctile = ',num2str(Q3ndur95),' \musec'],'Unit','normalized','Color','r')
+ylim([0 70])
+title(['95% (\musec) (n = ',strnclicks,')']);
+%ylabel('Counts')
 xlabel('Time (\musec)')
-filename = fullfile(GraphDir,['Envelope_duration_',filedate]);
+filename = fullfile(GraphDir,['Duration_',filedate]);
 saveas(gca, filename, 'tif')
-close(figure(2));
+saveas(gca, filename, 'jpg')
+close
 
 
-%PeakFrequency
-medpeakFr = prctile(allpeakFrcon,50);
-figure(3)
-hist(allpeakFrcon,50)
-line([medpeakFr medpeakFr], [0 600],'Color','r','LineWidth',3);
-text(0.1,0.9,['median = ',num2str(medpeakFr),' kHz'],'Unit','normalized','Color','r')
-ylim([0 600])
-xlim([105 155])
-title(['Histgram of all peak frequencies (kHz) (n = ',strnclicks,')']);
-ylabel('Counts')
-xlabel('Frequency (kHz)')
-filename = fullfile(GraphDir,['Peak_Frequency_',filedate]);
-saveas(gca, filename, 'tif')
-close(figure(3));
+% %PeakFrequency
+% figure(3)
+% hist(allpeakFrcon,25)
+% line([medpeakFr medpeakFr], [0 250],'Color','r','LineWidth',3);
+% line([Q1peakFr Q1peakFr], [0 250],'Color','r','LineWidth',2,'LineStyle',':');
+% line([Q3peakFr Q3peakFr], [0 250],'Color','r','LineWidth',2,'LineStyle',':');
+% text(0.1,0.9,['25th pctile = ',num2str(Q1peakFr,3),' kHz'],'Unit','normalized','Color','r')
+% text(0.1,0.85,['median = ',num2str(medpeakFr,3),' kHz'],'Unit','normalized','Color','r')
+% text(0.1,0.8,['75th pctile = ',num2str(Q3peakFr,3),' kHz'],'Unit','normalized','Color','r')
+% %ylim([0 600])
+% %xlim([105 155])
+% title(['Histgram of all peak frequencies (kHz) (n = ',strnclicks,')']);
+% ylabel('Counts')
+% xlabel('Frequency (kHz)')
+% filename = fullfile(GraphDir,['Peak_Frequency_',filedate]);
+% saveas(gca, filename, 'tif')
+% saveas(gca, filename, 'jpg')
+% close(figure(3));
+% 
+% 
+% %ppSignal
+% figure(4)
+% hist(allppSignalcon,50)
+% line([medppSig medppSig], [0 500],'Color','r','LineWidth',3);
+% line([Q1ppSig Q1ppSig], [0 500],'Color','r','LineWidth',2,'LineStyle',':');
+% line([Q3ppSig Q3ppSig], [0 500],'Color','r','LineWidth',2,'LineStyle',':');
+% text(0.6,0.9,['25th pctile = ',num2str(Q1ppSig,3),' dB'],'Unit','normalized','Color','r')
+% text(0.6,0.85,['median = ',num2str(medppSig,3),' dB'],'Unit','normalized','Color','r')
+% text(0.6,0.8,['75th pctile = ',num2str(Q3ppSig,3),' dB'],'Unit','normalized','Color','r')
+% %ylim([0 300])
+% %xlim([105 155])
+% title(['Histgram of all peak-peak amplitudes (n = ',strnclicks,')']);
+% ylabel('Counts')
+% xlabel('p-p amplitude (dB)')
+% filename = fullfile(GraphDir,['P-P_Amplitude_',filedate]);
+% saveas(gca, filename, 'tif')
+% saveas(gca, filename, 'jpg')
+% close(figure(4));
+% 
+% 
+% %ici per encounter
+% %Remove ICIs less than 2 and greater than 400
+% remove = find(alliciEncs<2 | alliciEncs>390);
+% alliciEncs(remove) = [];
+% numicis = size(alliciEncs,1);
+% strnicis = num2str(numicis);
+% figure(5)
+% xbins = 10:10:405;
+% hist(alliciEncs,xbins)
+% % line([mediciEncs mediciEncs], [0 900],'Color','r','LineWidth',3);
+% % line([Q1iciEncs Q1iciEncs], [0 900],'Color','r','LineWidth',2,'LineStyle',':');
+% % line([Q3iciEncs Q3iciEncs], [0 900],'Color','r','LineWidth',2,'LineStyle',':');
+% % text(0.5,0.9,['25th pctile = ',num2str(Q1iciEncs,3),' msec'],'Unit','normalized','Color','r')
+% % text(0.5,0.85,['median = ',num2str(mediciEncs,3),' msec'],'Unit','normalized','Color','r')
+% % text(0.5,0.8,['75th pctile = ',num2str(Q3iciEncs,3),' msec'],'Unit','normalized','Color','r')
+% % ylim([0 400])
+% xlim([0 400])
+% title(['Histgram of all inter-click-intervals (n = ',strnicis,')']);
+% ylabel('Counts')
+% xlabel('Time (msec)')
+% set(get(gca,'child'),'FaceColor','k','EdgeColor','w');
+% filename = fullfile(GraphDir,['ICI_',filedate]);
+% saveas(gca, filename, 'tif')
+% saveas(gca, filename, 'jpg')
+% close(figure(5));
+% 
+% 
+% 
+% %-3 dB Bandwidth
+% figure(5)
+% xbins = 0:1:20;
+% hist(allbw3dbcon,xbins)
+% xlim([0 20])
+% title(['Histgram of all -3dB Bandwidths (n = ',strnclicks,')']);
+% ylabel('Counts')
+% xlabel('-3dB Bandwidth (kHz)')
+% set(get(gca,'child'),'FaceColor','k','EdgeColor','w');
+% filename = fullfile(GraphDir,['3dBBW_',filedate]);
+% saveas(gca, filename, 'tif')
+% saveas(gca, filename, 'jpg')
+% saveas(gca, filename, 'fig')
+% close(figure(5));
+% 
+% %-10 dB Bandwidth
+% figure(5)
+% xbins = 0:2:50;
+% hist(allbw10dbcon,xbins)
+% xlim([0 50])
+% title(['Histgram of all -10dB Bandwidths (n = ',strnclicks,')']);
+% ylabel('Counts')
+% xlabel('-10dB Bandwidth (kHz)')
+% set(get(gca,'child'),'FaceColor','k','EdgeColor','w');
+% filename = fullfile(GraphDir,['10dBBW_',filedate]);
+% saveas(gca, filename, 'tif')
+% saveas(gca, filename, 'jpg')
+% saveas(gca, filename, 'fig')
+% close(figure(5));
 
 
-%ppSignal
-medppSig = prctile(allppSignalcon,50);
-figure(4)
-hist(allppSignalcon,50)
-line([medppSig medppSig], [0 300],'Color','r','LineWidth',3);
-text(0.5,0.9,['median = ',num2str(medppSig),' dB'],'Unit','normalized','Color','r')
-ylim([0 300])
-xlim([105 155])
-title(['Histgram of all peak-peak amplitudes (n = ',strnclicks,')']);
-ylabel('Counts')
-xlabel('p-p amplitude (dB)')
-filename = fullfile(GraphDir,['P-P_Amplitude_',filedate]);
-saveas(gca, filename, 'tif')
-close(figure(4));
-
-
-%ici per encounter
-mediciEncs = prctile(alliciEncs,50);
-numicis = size(alliciEncs,1);
-strnicis = num2str(numicis);
-figure(5)
-hist(alliciEncs,50)
-line([mediciEncs mediciEncs], [0 375],'Color','r','LineWidth',3);
-text(0.5,0.9,['median = ',num2str(mediciEncs),' msec'],'Unit','normalized','Color','r')
-ylim([0 375])
-% xlim([0 0.5])
-title(['Histgram of all inter-click-intervals (n = ',strnicis,')']);
-ylabel('Counts')
-xlabel('Time (msec)')
-filename = fullfile(GraphDir,['ICI_',filedate]);
-saveas(gca, filename, 'tif')
-close(figure(5));
-
-
-%Next -plot the median values and mean spectra per encounter, perhaps on a multi plot? 
-numMeds = size(allmedianValues,1);
-strnMeds = num2str(numMeds);
-titlecell = {'Peak Frequency', 'Inter-click-interval','Click Duration',...
-    'Peak-to-peak amplitude';'(kHz)','(ms)','(\musec)', '(dB)';...
-    'Frequency', 'Time','Time','Amplitude'};
-figure(6)
-for p = 1:4
-    subplot(2,2,p)
-    hist(allmedianValues(:,p),50);
-    meanMed = nanmean(allmedianValues(:,p));
-    text(0.1,0.9,['mean = ',num2str(meanMed),' ',titlecell{2,p}],'Unit','normalized','Color','r')
-    title(titlecell{1,p});
-    xlabel([titlecell{3,p},' ',titlecell{2,p}])
-    ylabel('Counts')
-end
-text(-1,2.6,['Histgrams of median parameters per Encounter (n = ',strnMeds,')'],'Unit','normalized')
-filename = fullfile(GraphDir,['MediansPerEncounter',filedate]);
-saveas(gca, filename, 'tif')
-close(figure(6));
+% %Next -plot the median values
+% numMeds = size(allmedianValues,1);
+% strnMeds = num2str(numMeds);
+% titlecell = {'Peak Frequency', 'Inter-click-interval','Click Duration',...
+%     'Peak-to-peak amplitude';'(kHz)','(ms)','(\musec)', '(dB)';...
+%     'Frequency', 'Time','Time','Amplitude'};
+% figure(6)
+% for p = 1:4
+%     subplot(2,2,p)
+%     hist(allmedianValues(:,p),30);
+%     meanMed = nanmean(allmedianValues(:,p));
+%     text(0.1,0.9,['mean = ',num2str(meanMed,3),' ',titlecell{2,p}],'Unit','normalized','Color','r')
+%     title(titlecell{1,p});
+%     xlabel([titlecell{3,p},' ',titlecell{2,p}])
+%     ylabel('Counts')
+% end
+% text(-1,2.55,['Histgrams of median parameters per Encounter (n = ',strnMeds,')'],'Unit','normalized')
+% filename = fullfile(GraphDir,['MediansPerEncounter',filedate]);
+% saveas(gca, filename, 'tif')
+% saveas(gca, filename, 'jpg')
+% close(figure(6));
 
 
 %Then plot the mean spectra - could overlay with different colors
@@ -161,55 +287,146 @@ numSpecs = size(allmeanSpecClicks,1);
 strnSpecs = num2str(numSpecs);
 %Make frequency axis
 numFreqBins = (size(allmeanSpecClicks,2))-1;
-steps = (fs/2)/(numFreqBins-1);
-freqs = (0:steps:(fs/2))/1000;
-figure(7)
-for p = 1:numSpecs
-    plot(freqs,allmeanSpecClicks(p,2:end), 'Color',rand(1,3));
-    hold on
+%steps = (fs/2)/(numFreqBins-1);
+%freqs = (0:steps:(fs/2))/1000;
+freqs = f;
+% figure(7)
+% for p = 1:numSpecs
+%     %plot(freqs,allmeanSpecClicks(p,2:end), 'Color',rand(1,3));
+%     plot(freqs,allmeanSpecClicks(p,2:end), 'Color','k','LineWidth',1);
+%     hold on
+%     plot(freqs,allmeanSpecNoises(p,2:end), 'Color',[0.7, 0.7, 0.7], 'LineWidth',1);
+% end
+% legend('mean click','mean noise','Location','southwest')
+% title(['Mean Spectrum of Each Encounter (n = ',strnumenc,')']);
+% xlabel('Frequency (kHz)')
+% ylabel('Amplitude (dB)')
+% filename = fullfile(GraphDir,['MeanSpecPerEncounter',filedate]);
+% saveas(gca, filename, 'tif')
+% saveas(gca, filename, 'jpg')
+% close(figure(7));
+% 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Then combine all spectra and calculate one mean, plot with the mean noise
+%from the first file.
+%First, calculate the mean. start by looping through all the entries in the
+%cell array and saving those to a non-cell matrix
+numspecClick = size(allspecClickTfcon,1);
+concatspecs = [];
+for s = 1:numspecClick
+        concatspecs = [concatspecs;allspecClickTfcon{s,1}'];
 end
-title(['Mean Spectrum of Each Encounter (n = ',strnumenc,')']);
-xlabel('Frequency (kHz)')
-ylabel('Amplitude (dB)')
-filename = fullfile(GraphDir,['MeanSpecPerEncounter',filedate]);
-saveas(gca, filename, 'tif')
-close(figure(7));
-    
-    
-%make a time series!
-figure(8)
-hist(allclickDnum(:,1),77) %77 days between start and end of effort, to get clicks per day.
-% ylim([0 375])
-% xlim([0 0.5])
-%Add grey boxes for no refording effort. Lines at july 27 and october 11 
-dategapblocksX = [735781 735781 735807 735807 735885 735885 735903 735903];%values for bottoms and tops of squares to add [b,t,t,b]
-dategapblocksY = [0 900 900 0 0 900 900 0];
+grandmeanSpec = mean(concatspecs);
+
+%Make frequency axis
+numFreqBins = (size(allmeanSpecClicks,2))-1;
+freqs = f;
+
+% figure(8)
+% plot(freqs,grandmeanSpec(1,1:end), 'Color','k','LineWidth',1);
+% hold on
+% plot(freqs,allmeanSpecNoises(1,2:end), 'Color',[0.7, 0.7, 0.7], 'LineWidth',1);
+% xlim([0 200]);
+% legend('mean click','mean noise','Location','southwest')
+% title(['Mean Spectrum of all Clicks (n = ',num2str(numspecClick),')']);
+% xlabel('Frequency (kHz)')
+% ylabel('Amplitude (dB)')
+% filename = fullfile(GraphDir,['MeanSpecGrand',filedate]);
+% saveas(gca, filename, 'tif')
+% saveas(gca, filename, 'jpg')
+% close(figure(8));
+
+
+%Make it pretty for publications
+%Normalize to max value
+prenorm = grandmeanSpec(1,1:end);
+maxfreq = max(prenorm);
+normdbs = prenorm-maxfreq;
+prenormnoise = allmeanSpecNoises(1,2:end);
+normnoisedbs = prenormnoise-maxfreq;
+%Truncate at 20kHz and 190kHz (186 for Janik)
+toolowfreq = find(freqs < 20);
+normdbs(toolowfreq) = [];
+normnoisedbs(toolowfreq) = [];
+plotfreqs = freqs;
+plotfreqs(toolowfreq) = [];
+toohighfreq = find(plotfreqs > 186);
+normdbs(toohighfreq) = [];
+normnoisedbs(toohighfreq) = [];
+plotfreqs(toohighfreq) = [];
+
+
+figure(9)
+plot(plotfreqs,normdbs, 'Color','k','LineWidth',2);
 hold on
-grey = [0.8,0.8,0.8];
-fill(dategapblocksX,dategapblocksY, grey);
-current_day = datenum('Jul 15 2014'); %the date the plot starts
-[Y, M, D, H, MN, S] = datevec(current_day);
-current_day = addtodate(current_day, -D + 1,'day');
-last_day = datenum('Oct 31 2014');
-xlim([current_day last_day]);
-xtick = [current_day];
-xstep_length = 1; %one tick per month
-xstep_unit = 'month';
-while (last_day > current_day)
-    xtick = [xtick addtodate(current_day, xstep_length, xstep_unit)];
-    current_day = addtodate(current_day, xstep_length, xstep_unit);
-end
-ts = gca;
-set(ts,'XTick', xtick,'XTickLabel', datestr(xtick,'mmm yy')); 
-%,'FontSize',14
-set(gca, 'Ticklength', [0 0])
-set(gcf, 'renderer', 'zbuffer'); %removes the exponent from the date  
-title(['Time Series of All Encounters (n = ',strnumenc,')']);
-ylabel('Counts of Clicks per Day')
-xlabel('Date') %Need something here to make this axis pretty with months/dates
-filename = fullfile(GraphDir,['TS_',filedate]);
-saveas(gca, filename, 'tif')
-close(figure(8));
+plot(plotfreqs,normnoisedbs, 'Color',[0.7, 0.7, 0.7],...
+    'LineWidth',2);
+xlim([0 200]);
+set(gca,'XTick',[0,40,80,120,160,200],'FontSize',18);
+xlabel('Frequency (kHz)','FontSize',18);
+ylim([-42 3]);
+set(gca,'YTick',[-30,-15,0],'FontSize',18);
+ylabel('Relative Spectral Level (dB)','FontSize',18);
+%set shape/size
+set(gcf,'PaperUnits', 'inches','PaperPosition', [0 0 6 6]);
+
+
+filename = fullfile(GraphDir,['MeanSpecGrand_forPub',filedate]);
+print('-dtiff',filename)
+%print('-djpeg', filename)
+print('-dpng', filename,'-r600')
+%print('-deps', filename,'-r200')
+saveas(gca, filename, 'fig')
+close(figure(9));
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
+% %make a time series!
+% figure(9)
+% hist(allclickDnum(:,1),77) %77 days between start and end of effort, to get clicks per day.
+% ylim([0 1300])
+% % xlim([0 0.5])
+% %Add grey boxes for no refording effort. Lines at july 27 and october 11 
+% dategapblocksX = [735781 735781 735807 735807 735885 735885 735903 735903];%values for bottoms and tops of squares to add [b,t,t,b]
+% dategapblocksY = [0 1300 1300 0 0 1300 1300 0];
+% hold on
+% grey = [0.8,0.8,0.8];
+% fill(dategapblocksX,dategapblocksY, grey);
+% ylim([0 1300])
+% current_day = datenum('Jul 15 2014'); %the date the plot starts
+% [Y, M, D, H, MN, S] = datevec(current_day);
+% current_day = addtodate(current_day, -D + 1,'day');
+% last_day = datenum('Oct 31 2014');
+% xlim([current_day last_day]);
+% xtick = [current_day];
+% xstep_length = 1; %one tick per month
+% xstep_unit = 'month';
+% while (last_day > current_day)
+%     xtick = [xtick addtodate(current_day, xstep_length, xstep_unit)];
+%     current_day = addtodate(current_day, xstep_length, xstep_unit);
+% end
+% ts = gca;
+% set(ts,'XTick', xtick,'XTickLabel', datestr(xtick,'mmm yy')); 
+% %,'FontSize',14
+% set(gca, 'Ticklength', [0 0])
+% set(gcf, 'renderer', 'zbuffer'); %removes the exponent from the date  
+% title(['Time Series of All Encounters (n = ',strnumenc,')']);
+% ylabel('Counts of Clicks per Day')
+% xlabel('Date') %Need something here to make this axis pretty with months/dates
+% filename = fullfile(GraphDir,['TS_',filedate]);
+% saveas(gca, filename, 'tif')
+% saveas(gca, filename, 'jpg')
+% close(figure(9));
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Make a boxplot with all the parameters
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -218,6 +435,10 @@ close(figure(8));
 %Averages 
 meandurClick = mean(alldurClickcon);
 meannDur = mean(allnDurcon);
+meanndur95 = mean(allndur95con);
+meanndur95Tails = mean(allndur95Tailscon);
+meanbw3db = mean(allbw3dbcon);
+meanbw10db = mean(allbw10dbcon);
 meanpeakFr = mean(allpeakFrcon);
 meanppSignal = mean(allppSignalcon);
 %meanspecClickTf = mean(allspecClickTfcon);
@@ -226,6 +447,10 @@ meaniciEncs = mean(alliciEncs);
 %Standard Deviation
 stddurClick = std(alldurClickcon);
 stdnDur = std(allnDurcon);
+stdndur95 = std(allndur95con);
+stdndur95Tails = std(allndur95Tailscon);
+stdbw3db = std(allbw3dbcon);
+stdbw10db = std(allbw10dbcon);
 stdpeakFr = std(allpeakFrcon);
 stdppSignal = std(allppSignalcon);
 %stdspecClickTf = std(allspecClickTfcon);
@@ -234,6 +459,10 @@ stdiciEncs = std(alliciEncs);
 %medians (previously calculated)
 meddurClick;
 mednDur;
+medndur95;
+medndur95Tails;
+medbw3db;
+medbw10db;
 medpeakFr;
 medppSig;
 mediciEncs;
@@ -243,17 +472,29 @@ mediciEncs;
 %Skewness
 skedurClick = skewness(alldurClickcon);
 skenDur = skewness(allnDurcon);
+skendur95 = skewness(allndur95con);
+skendur95Tails = skewness(allndur95Tailscon);
+skebw3db = skewness(allbw3dbcon);
+skebw10db = skewness(allbw10dbcon);
 skepeakFr = skewness(allpeakFrcon);
 skeppSignal = skewness(allppSignalcon);
 %skespecClickTf = skewness(allspecClickTfcon);
 skeiciEncs = skewness(alliciEncs);
 
 %Make one table, save it as .mat and .xls 
-SummaryStats = [meandurClick meannDur meanpeakFr meanppSignal meaniciEncs;...
-    meddurClick mednDur medpeakFr medppSig mediciEncs;...
-    stddurClick stdnDur stdpeakFr stdppSignal stdiciEncs;...
-    skedurClick skenDur skepeakFr skeppSignal skeiciEncs];
+SummaryStats = [Q1durClick Q1nDur Q1ndur95 Q1ndur95Tails Q1bw3db Q1bw10db Q1peakFr Q1ppSig Q1iciEncs;...
+    meandurClick meannDur meanndur95 meanndur95Tails meanbw3db meanbw10db meanpeakFr meanppSignal meaniciEncs;...
+    meddurClick mednDur medndur95 medndur95Tails medbw3db medbw10db medpeakFr medppSig mediciEncs;...
+    Q3durClick Q3nDur Q3ndur95 Q3ndur95Tails Q3bw3db Q3bw10db Q3peakFr Q3ppSig Q3iciEncs;...
+    stddurClick stdnDur stdndur95 stdndur95Tails stdbw3db stdbw10db stdpeakFr stdppSignal stdiciEncs;...
+    skedurClick skenDur skendur95 skendur95Tails skebw3db skebw10db skepeakFr skeppSignal skeiciEncs];
 
 
 filename = fullfile(inDir,['SummaryStats_',filedate]);
 save(filename, 'SummaryStats')
+xlswrite([filename,'.xls'],SummaryStats)
+%Write csv with headers
+headers = {'durClick','nDur','ndur95','ndur95Tails','bw3db','bw10db','peakFr','ppSig','iciEncs'};
+csvwrite_with_headers([filename,'.csv'],SummaryStats,headers)
+
+
