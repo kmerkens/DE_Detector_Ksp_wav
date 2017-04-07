@@ -7,12 +7,20 @@ parametersST.chan = 1; % which channel do you want to look at?
 
 %parametersST.fRanges = [50000 99000]; 
 %parametersST.fRanges = [1000,159000]; % For Kogia on 320
+<<<<<<< HEAD
 % parametersST.fRanges = [10000,180000]; % For Kogia on 500 D Mann
 %parametersST.fRanges = [1000,187000]; % For Kogia on 375
 %parametersST.fRanges = [5000,200000]; % For Dalls on 480 T Yack
 %parametersST.fRanges = [5000,143500]; % For Kogia on 288
 %parametersST.fRanges = [5000,249000]; % For Harbor on 500 (E Jacobsen)
 parametersST.fRanges = [1000,190000]; % For Ksima on 384 CARB (CRP)
+=======
+%parametersST.fRanges = [5000,200000]; % For Kogia on 500 D Mann
+%parametersST.fRanges = [1000,187000]; % For Kogia on 375
+%parametersST.fRanges = [5000,200000]; % For Dalls on 480 T Yack
+%parametersST.fRanges = [5000,143500]; % For Kogia on 288
+parametersST.fRanges = [5000,249000]; % For Harbor on 500 (E Jacobsen)
+>>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
 
 
 %parametersST.thresholds = 13500; % Amplitude threshold in counts. 
@@ -21,12 +29,19 @@ parametersST.fRanges = [1000,190000]; % For Ksima on 384 CARB (CRP)
 %150311 - changed from 5000 - was this set wrong? That's higer than the
 %3500 in the hi res which it shouldn't be.  are t he unit s the same?
 % For predictability, keep this consistent between low and hi res steps.
+<<<<<<< HEAD
 % parametersST.thresholds = 40000; %Set high for D. Mann wav files, no tf. 
 %parametersST.thresholds = 500; %Set lower to start V. Janik files
 %parametersST.thresholds = 1000000; %Set even higher again for TYack dalls
 %parametersST.thresholds = 750000; %Set low to start E Jaconsen porpoise
 parametersST.thresholds = 2500; %Adjusting for CARB file
 
+=======
+%parametersST.thresholds = 40000; %Set high for D. Mann wav files, no tf. 
+%parametersST.thresholds = 500; %Set lower to start V. Janik files
+%parametersST.thresholds = 1000000; %Set even higher again for TYack dalls
+parametersST.thresholds = 750000; %Set low to start E Jaconsen porpoise
+>>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
 
 parametersST.frameLengthSec = .01; %Used for calculating fft size
 parametersST.overlap = .50; % fft overlap

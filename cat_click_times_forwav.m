@@ -10,6 +10,7 @@
 % start, uses hdr info. plotting section commented out.
 
 %Set sampling frequency, in Hz
+<<<<<<< HEAD
 % fs = 375000; %V Janik
 % fs = 500000; %D Mann, E Jacobson
 %fs = 480000; %T Yack Dalls
@@ -23,6 +24,17 @@ fs = 384000; %CARB
 inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\metadata\kogia';
 
 matList = dir(fullfile(inDir,'kogia*.mat')); % Add wildcard to match the files you want to process.
+=======
+%fs = 375000; %V Janik
+fs = 500000; %D Mann, E Jacobson
+%fs = 480000; %T Yack Dalls
+
+%inDir = 'E:\metadata\bigDL'; % the path to your directory of detector outputs goes here
+%inDir = 'D:\metadata\Hawaii18K_disk04';
+inDir = 'C:\Users\Karlina.Merkens\Documents\Porpoise\OtherRecordings\EJacobson_Harbor_wild\metadata\harbor';
+%inDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\320_detectctor_dir\metadata\320_Detector_Test';
+matList = dir(fullfile(inDir,'harbor*.mat')); % Add wildcard to match the files you want to process.
+>>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
 clickDnum = [];
 durClickcon = [];
 bw3dbcon = [];
@@ -91,6 +103,7 @@ xlswrite([inDir,'\',choppedDir{7},'_ClicksOnlyConcatCHAR',filedate,'.xls'],click
 %%%not speparted by xwav. 
 
 %Get detectionTimes
+<<<<<<< HEAD
 % inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\kogia';
 % infile = 'VJanik_Ksima_Wild_log_150521.xls';
 % inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\DMann_Ksima_captive\kogia';
@@ -99,6 +112,10 @@ inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_W
 infile = 'Ksima_guided_detector_160601.xls';
 
 
+=======
+inpath = 'C:\Users\Karlina.Merkens\Documents\Porpoise\OtherRecordings\EJacobson_Harbor_wild\harbor';
+infile = 'EJacobsen_harbor_wild_log_150702.xls';
+>>>>>>> 42e823b7df90fc506da5b33ccc3e02e1c5e22766
 %read the file into 3 matrices-- numeric, text, and raw cell array
 [num, txt, raw] = xlsread([inpath '\' infile]);
 %error check
