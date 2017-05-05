@@ -62,7 +62,7 @@ for ne = 1:numEnc
         %the previous one was), so of those two, remove the one with the
         %smaller amplitude. Sometimes You'll be removing the "good" click,
         %but mostly this will eliminate the echoes. 
-        iciTooSmall = find(iciEncSecs < 0.005);
+        iciTooSmall = find(iciEncSecs < 0.002);
         %First check in the TooSmall list to see if any subsequent clicks
         %are also too close. 
         Alltrashclicks = [];

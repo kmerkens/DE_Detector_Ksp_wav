@@ -355,29 +355,41 @@ freqs = f;
 %First, calculate the mean. start by looping through all the entries in the
 %cell array and saving those to a non-cell matrix
 numspecClick = size(allspecClickTfcon,1);
+numspecNoise = size(allspecNoiseTfcon,1);
 concatspecs = [];
+concatspecsN = [];
 for s = 1:numspecClick
         concatspecs = [concatspecs;allspecClickTfcon{s,1}'];
 end
 grandmeanSpec = mean(concatspecs);
 
+
+for s = 1:numspecNoise
+        concatspecsN = [concatspecsN;allspecNoiseTfcon{s,1}'];
+end
+%Get unique noise spectra (because some/many are repeats)
+concatspecsNU = unique(concatspecsN,'rows');
+grandmeanSpecN = mean(concatspecsNU);
+
 %Make frequency axis
 numFreqBins = (size(allmeanSpecClicks,2))-1;
 freqs = f;
 
-% figure(8)
-% plot(freqs,grandmeanSpec(1,1:end), 'Color','k','LineWidth',1);
-% hold on
+    
+figure(8)
+plot(freqs,grandmeanSpec(1,1:end), 'Color','k','LineWidth',1);
+hold on
+plot(freqs,grandmeanSpecN(1,1:end), 'Color',[0.7, 0.7, 0.7], 'LineWidth',1);
 % plot(freqs,allmeanSpecNoises(1,2:end), 'Color',[0.7, 0.7, 0.7], 'LineWidth',1);
-% xlim([0 200]);
-% legend('mean click','mean noise','Location','southwest')
-% title(['Mean Spectrum of all Clicks (n = ',num2str(numspecClick),')']);
-% xlabel('Frequency (kHz)')
-% ylabel('Amplitude (dB)')
-% filename = fullfile(GraphDir,['MeanSpecGrand',filedate]);
-% saveas(gca, filename, 'tif')
-% saveas(gca, filename, 'jpg')
-% close(figure(8));
+xlim([0 100]);
+legend('mean click','mean noise','Location','southwest')
+title(['Mean Spectrum of all Clicks (n = ',num2str(numspecClick),')']);
+xlabel('Frequency (kHz)')
+ylabel('Amplitude (dB)')
+filename = fullfile(GraphDir,['MeanSpecGrand',filedate]);
+saveas(gca, filename, 'tif')
+saveas(gca, filename, 'jpg')
+close(figure(8));
 
 
 %Make it pretty for publications
@@ -385,7 +397,7 @@ freqs = f;
 prenorm = grandmeanSpec(1,1:end);
 maxfreq = max(prenorm);
 normdbs = prenorm-maxfreq;
-prenormnoise = allmeanSpecNoises(1,2:end);
+prenormnoise = grandmeanSpecN(1,1:end);
 normnoisedbs = prenormnoise-maxfreq;
 %Truncate at 20kHz and 190kHz (186 for Janik)
 toolowfreq = find(freqs < 20);
@@ -506,25 +518,25 @@ mediciEncs;
 
 %kurtosis
 
-%Skewness
-skedurClick = skewness(alldurClickcon);
-skenDur = skewness(allnDurcon);
-skendur95 = skewness(allndur95con);
-skendur95Tails = skewness(allndur95Tailscon);
-skebw3db = skewness(allbw3dbcon);
-skebw10db = skewness(allbw10dbcon);
-skepeakFr = skewness(allpeakFrcon);
-skeppSignal = skewness(allppSignalcon);
-%skespecClickTf = skewness(allspecClickTfcon);
-skeiciEncs = skewness(alliciEncs);
+% %Skewness
+% skedurClick = skewness(alldurClickcon);
+% skenDur = skewness(allnDurcon);
+% skendur95 = skewness(allndur95con);
+% skendur95Tails = skewness(allndur95Tailscon);
+% skebw3db = skewness(allbw3dbcon);
+% skebw10db = skewness(allbw10dbcon);
+% skepeakFr = skewness(allpeakFrcon);
+% skeppSignal = skewness(allppSignalcon);
+% %skespecClickTf = skewness(allspecClickTfcon);
+% skeiciEncs = skewness(alliciEncs);
 
 %Make one table, save it as .mat and .xls 
 SummaryStats = [Q1durClick Q1nDur Q1ndur95 Q1ndur95Tails Q1bw3db Q1bw10db Q1peakFr Q1ppSig Q1iciEncs;...
     meandurClick meannDur meanndur95 meanndur95Tails meanbw3db meanbw10db meanpeakFr meanppSignal meaniciEncs;...
     meddurClick mednDur medndur95 medndur95Tails medbw3db medbw10db medpeakFr medppSig mediciEncs;...
     Q3durClick Q3nDur Q3ndur95 Q3ndur95Tails Q3bw3db Q3bw10db Q3peakFr Q3ppSig Q3iciEncs;...
-    stddurClick stdnDur stdndur95 stdndur95Tails stdbw3db stdbw10db stdpeakFr stdppSignal stdiciEncs;...
-    skedurClick skenDur skendur95 skendur95Tails skebw3db skebw10db skepeakFr skeppSignal skeiciEncs];
+    stddurClick stdnDur stdndur95 stdndur95Tails stdbw3db stdbw10db stdpeakFr stdppSignal stdiciEncs];
+    %skedurClick skenDur skendur95 skendur95Tails skebw3db skebw10db skepeakFr skeppSignal skeiciEncs];
 
 
 filename = fullfile(inDir,['SummaryStats_',filedate]);

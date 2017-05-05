@@ -23,6 +23,8 @@ function [clickInd,ppSignal,durClick,dur95usec,dur95usecTails,bw3db,bw10db,yNFil
 N = length(fftWindow);
 ppSignal = zeros(size(clicks,1),1);
 durClick =  zeros(size(clicks,1),1);
+dur95usec = zeros(size(clicks,1),1);
+dur95usecTails = zeros(size(clicks,1),1);
 bw3db = zeros(size(clicks,1),3);
 bw10db = zeros(size(clicks,1),3);
 yNFilt = cell(size(clicks,1),1);
@@ -38,8 +40,6 @@ cDLims = ceil([p.minClick_us, p.maxClick_us]./(hdr.fs/1e6));
 cDLims95 = ceil([p.minClick_us, p.maxClick95_us]./(hdr.fs/1e6));
 envDurLim = ceil(p.delphClickDurLims./(hdr.fs/1e6));
 nDur = zeros(size(clicks,1),1);
-dur95usec = zeros(size(clicks,1),1);
-dur95usecTails = zeros(size(clicks,1),1);
 deltaEnv = zeros(size(clicks,1),1);
 
 f = 0:((hdr.fs/2)/1000)/((N/2)-1):((hdr.fs/2)/1000);
@@ -247,32 +247,32 @@ for c = 1:size(clicks,1)
         end
     end
     
-    %find the first value above threshold with positive slope and find
-    %the last above with negative slope
-    lowIdx = aboveThr(find(direction,1,'first'));
-    negative = find(direction==-1);
-    if isempty(negative)
-        highIdx = aboveThr(end);
-    else
-        highIdx = aboveThr(negative(end));
-    end
-    nDur(c,1) = highIdx - lowIdx + 1;
+    % %find the first value above threshold with positive slope and find
+    % %the last above with negative slope
+    % lowIdx = aboveThr(find(direction,1,'first'));
+    % negative = find(direction==-1);
+    % if isempty(negative)
+        % highIdx = aboveThr(end);
+    % else
+        % highIdx = aboveThr(negative(end));
+    % end
+    % nDur(c,1) = highIdx - lowIdx + 1;
     
-    if nDur(c)>(p.delphClickDurLims(2))
-        validClicks(c) = 0;
-        continue
-    end
+    % if nDur(c)>(p.delphClickDurLims(2))
+        % validClicks(c) = 0;
+        % continue
+    % end
     
-    %compare maximum first half of points with second half.
-    halves = ceil(nDur(c,1)/2);   
-    env1stmax = max(env3(lowIdx:min([lowIdx+halves,length(env3)])));
-    env2ndmax = max(env3(min([lowIdx+(halves)+1,length(env3)]):end));
-    deltaEnv(c,1) = env1stmax-env2ndmax;
+    % %compare maximum first half of points with second half.
+    % halves = ceil(nDur(c,1)/2);   
+    % env1stmax = max(env3(lowIdx:min([lowIdx+halves,length(env3)])));
+    % env2ndmax = max(env3(min([lowIdx+(halves)+1,length(env3)]):end));
+    % deltaEnv(c,1) = env1stmax-env2ndmax;
     
-     if deltaEnv(c) < p.dEvLims(1)
-        validClicks(c) = 0;
-        continue
-     end
+     % if deltaEnv(c) < p.dEvLims(1)
+        % validClicks(c) = 0;
+        % continue
+     % end
      
      
      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -431,7 +431,7 @@ for c = 1:size(clicks,1)
     %calculation of -10dB bandwidth - amplitude associated with the halfpower points of a pressure pulse (see Au 1993, p.118);
     low = valMx-10; %p1/2power = 10log(p^2max/2) = 20log(pmax)-10dB = 0.3162*pmax; 1/10^(10/20)=0.3162
     %walk along spectrogram until low is reached on either side
-    slopeup=fliplr(specClickTf{c}(1:posMx));
+    slopeup=flipud(specClickTf{c}(1:posMx));
     slopedown=specClickTf{c}(posMx:round(length(specClickTf{c})));
     for e10dB=1:length(slopeup)
         if slopeup(e10dB)<low %stop at value < -3dB: point of lowest frequency

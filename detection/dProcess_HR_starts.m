@@ -40,21 +40,7 @@ for k = 1:numStarts % stepping through using the start/end points
     % Look for click candidates 
     [clicks, noises] = dHighres_click(p, hdr, energy, wideBandData);
     
-    %Added in the circumstance where there isn't enough room between
-    %multiple clicks to allow taking another noise sample. So, repeat the
-    %original noise sample to correspond to the second click. Most likely
-    %these duplicate clicks/noises will be thrown out later because they
-    %are too close in time and will be within the lockout period added in
-    %clickInlinePProc.m
-    if ~isequal(size(clicks,1), size(noises,1));
-        numclicks = size(clicks,1);
-        noises = repmat(noises,numclicks,1);
-        noises = noises(1:numclicks,1:2); %Truncate any extra repeats, not
-        %that it really matters because clickParameters only takes one
-        %noise sample per click anyway.
-        %   display('Uh oh - had to repeat the noise since there was not enough room to take a sample')
-        %   repeats = repeats + 1;
-    end
+    
     
     if ~ isempty(clicks)
         % if we're in here, it's because we detected one or more possible
@@ -66,6 +52,22 @@ for k = 1:numStarts % stepping through using the start/end points
         % meet peak frequency and bandwidth requirements
         clicks = clicks(validClicks==1,:);
         
+		%Added in the circumstance where there isn't enough room between
+		%multiple clicks to allow taking another noise sample. So, repeat the
+		%original noise sample to correspond to the second click. Most likely
+		%these duplicate clicks/noises will be thrown out later because they
+		%are too close in time and will be within the lockout period added in
+		%clickInlinePProc.m
+		if ~isequal(size(clicks,1), size(noises,1));
+			numclicks = size(clicks,1);
+			noises = repmat(noises,numclicks,1);
+			noises = noises(1:numclicks,1:2); %Truncate any extra repeats, not
+			%that it really matters because clickParameters only takes one
+			%noise sample per click anyway.
+			%   display('Uh oh - had to repeat the noise since there was not enough room to take a sample')
+			%   repeats = repeats + 1;
+		end
+		
         % Compute click parameters to decide if the detection should be kept
         [clickInd,ppSignal,durClick,dur95usec,dur95usecTails,bw3db,bw10db,...
             ~,yFilt,specClickTf,specNoiseTf,peakFr,yFiltBuff,...

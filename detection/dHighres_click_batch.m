@@ -39,7 +39,7 @@ for idx1=1:N; % for each data file
     fid = ioOpenViewpath(fullFiles{idx1}, viewPath, 'r');
     
     % Look for clicks, hand back parameters of retained clicks
-    [clickTimes,ppSignalVec,durClickVec,dur95Vec, dur95TailsVec,bw3dbVec,bw10dbVec,~,yFiltVec,...
+    [clickTimes,ppSignalVec,durClickVec,dur95Vec,bw3dbVec,bw10dbVec,~,yFiltVec,...
         specClickTfVec,specNoiseTfVec,peakFrVec,yFiltBuffVec,f,deltaEnvVec,nDurVec]...
         = dProcess_HR_starts(fid, wideBandFilter,starts,stops,channel,...
         xfrOffset,specRange,p,hdr,fullFiles{idx1},fftWindow,fullLabels{idx1});
@@ -87,7 +87,7 @@ for idx1=1:N; % for each data file
 %     % clicks have been removed. Save those to a directory.
 %     if guideDetector == 1
 %         plotClickEncounters_150310(encounterTimes,clickTimes,ppSignal,...
-%             durClick,bw3db,bw10db,specClickTf,specNoiseTf,peakFr,nDur,yFilt,hdr,GraphDir,f);
+%             durClick,dur95,bw3db,bw10db,specClickTf,specNoiseTf,peakFr,nDur,yFilt,hdr,GraphDir,f);
 %     end
 end
     
