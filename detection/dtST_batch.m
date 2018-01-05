@@ -45,7 +45,7 @@ for idx = 1:N  % "parfor" works here, parallellizing the process across as
         
         % Build a band pass filter
         %STFilter = spBuildEquiRippleFIR(p.fRanges, [0, 1], 'Fs', hdr.fs);
-        N = 12;
+        N = 4; %Changed from 12 to 4 as per P.T. Madsen recommendations 201711
         [b,a] = butter(N/2, [p.fRanges(1) p.fRanges(2)]/(hdr.fs/2),'bandpass'); 
         STFilter = [b;a];
         filtTaps = length(STFilter);

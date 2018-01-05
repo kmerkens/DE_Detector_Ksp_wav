@@ -39,8 +39,9 @@ for idx1=1:N; % for each data file
     fid = ioOpenViewpath(fullFiles{idx1}, viewPath, 'r');
     
     % Look for clicks, hand back parameters of retained clicks
-    [clickTimes,ppSignalVec,durClickVec,dur95Vec,bw3dbVec,bw10dbVec,~,yFiltVec,...
-        specClickTfVec,specNoiseTfVec,peakFrVec,yFiltBuffVec,f,deltaEnvVec,nDurVec]...
+    [clickTimes,ppSignalVec,durClickVec,dur95Vec,dur95TailsVec,durRMSusVec,bw3dbVec,...
+        bw10dbVec,bwRMSVec,QRMSVec,Q3dBVec,~,yFiltVec,specClickTfVec,specNoiseTfVec,...
+        peakFrVec,centFrVec,snrVec,yFiltBuffVec,f,deltaEnvVec,nDurVec]...
         = dProcess_HR_starts(fid, wideBandFilter,starts,stops,channel,...
         xfrOffset,specRange,p,hdr,fullFiles{idx1},fftWindow,fullLabels{idx1});
     
@@ -62,12 +63,18 @@ for idx1=1:N; % for each data file
     durClick = durClickVec(delIdx,:);
     dur95 = dur95Vec(delIdx,:);
     dur95Tails = dur95TailsVec(delIdx,:);
+    durRMSus = durRMSusVec(delIdx,:);
     bw3db = bw3dbVec(delIdx,:);
     bw10db = bw10dbVec(delIdx,:);
+    bwRMS = bwRMSVec(delIdx,:);
+    QRMS = QRMSVec(delIdx,:);
+    Q3dB = Q3dBVec(delIdx,:);
     % yNFilt = yNFiltVec;
     specClickTf = specClickTfVec(delIdx,:);
     specNoiseTf = specNoiseTfVec(delIdx,:);
     peakFr = peakFrVec(delIdx,:);
+    centFr = centFrVec(delIdx,:);
+    snr = snrVec(delIdx,:);
     deltaEnv = deltaEnvVec(delIdx,:);
     nDur = nDurVec(delIdx,:);
     
@@ -80,8 +87,9 @@ for idx1=1:N; % for each data file
     end
     
     save(strcat(fullLabels{idx1}(1:end-2),'.mat'),'clickTimes','ppSignal',...
-        'durClick','dur95','dur95Tails','bw3db','bw10db','f','hdr','nDur','deltaEnv','yFilt','specClickTf', ...
-        'specNoiseTf','peakFr','-mat','yFiltBuff');%
+        'durClick','dur95','dur95Tails','durRMSus',...
+        'bw3db','bw10db','bwRMS','QRMS','Q3dB','f','hdr','nDur','deltaEnv','yFilt','specClickTf', ...
+        'specNoiseTf','peakFr','centFr','snr','-mat','yFiltBuff');%
     
 %     % Make plots of each encounter's click parameters, now that all extra
 %     % clicks have been removed. Save those to a directory.

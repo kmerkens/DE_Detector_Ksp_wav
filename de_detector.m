@@ -42,7 +42,9 @@ tfFullFile = [];
 %baseDir = 'D:\';
 % baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\';
 % baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\DMann_Ksima_captive\';
-baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\';
+% baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\';
+% baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\TGridley_Ksima_Wild\';
+baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_DASPR_2017\';
 
 
 % Name of the deployment. This should be the first few characters in the 
@@ -66,7 +68,7 @@ inDisk = fileparts(baseDir(1:3));
 
 % Build list of (x)wav names in the base directory.
 % Right now only wav and xwav files are looked for.
-guideDetector = 1; %1 if using xls sheet to guide detection, 0 to run on all files in drive
+guideDetector = 0; %1 if using xls sheet to guide detection, 0 to run on all files in drive
 
 [detFiles,encounterTimes,GraphDir]= dFind_xwavs(baseDir,depl,guideDetector); 
 

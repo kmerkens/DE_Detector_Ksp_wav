@@ -1,5 +1,7 @@
-function [clickTimes,ppSignalVec,durClickVec,dur95Vec,dur95TailsVec,bw3dbVec,bw10dbVec,yNFiltVec,yFiltVec,...
-    specClickTfVec, specNoiseTfVec, peakFrVec,yFiltBuffVec,f,deltaEnvVec,nDurVec]...
+function [clickTimes,ppSignalVec,durClickVec,dur95Vec,dur95TailsVec,durRMSusVec...
+    bw3dbVec,bw10dbVec,bwRMSVec,QRMSVec,Q3dBVec,yNFiltVec,yFiltVec,...
+    specClickTfVec, specNoiseTfVec, peakFrVec,centFrVec,snrVec,...
+    yFiltBuffVec,f,deltaEnvVec,nDurVec]...
     = dProcess_HR_starts(fid, wideBandFilter,starts,stops,channel,xfrOffset,...
     specRange,p,hdr,fullFiles,fftWindow,fullLabel)
 
@@ -9,16 +11,22 @@ ppSignalVec = nan(5E6,1);
 durClickVec = nan(5E6,1);
 dur95Vec = nan(5E6,1);
 dur95TailsVec = nan(5E6,1);
+durRMSusVec = nan(5E6,1);
 bw3dbVec = nan(5E6,3);
 bw10dbVec = nan(5E6,3);
+bwRMSVec = nan(5E6,1);
+QRMSVec = nan(5E6,1);
+Q3dBVec = nan(5E6,1);
 yNFiltVec = [];
 yFiltVec = cell(5E6,1);
 specClickTfVec = cell(5E6,1);
 specNoiseTfVec = cell(5E6,1);
 peakFrVec = nan(5E6,1);
+centFrVec = nan(5E6,1);
 yFiltBuffVec = cell(5E6,1);
 deltaEnvVec = nan(5E6,1);
 nDurVec = nan(5E6,1);
+snrVec = nan(5E6,1);
 f = [];
 sIdx = 1;
 eIdx = 0;
@@ -69,8 +77,9 @@ for k = 1:numStarts % stepping through using the start/end points
 		end
 		
         % Compute click parameters to decide if the detection should be kept
-        [clickInd,ppSignal,durClick,dur95usec,dur95usecTails,bw3db,bw10db,...
-            ~,yFilt,specClickTf,specNoiseTf,peakFr,yFiltBuff,...
+        [clickInd,ppSignal,durClick,dur95usec,dur95usecTails,durRMSus,...
+            bw3db,bw10db,bwRMS,QRMS,Q3dB,...
+            ~,yFilt,specClickTf,specNoiseTf,peakFr,centFr,snr,yFiltBuff,...
             f,deltaEnv,nDur] = clickParameters(noises,wideBandData,p,...
             fftWindow,xfrOffset,clicks,specRange,hdr);
         
@@ -84,14 +93,20 @@ for k = 1:numStarts % stepping through using the start/end points
             ppSignalVec(sIdx:eIdx,1) = ppSignal;
             durClickVec(sIdx:eIdx,1) = durClick;
             dur95Vec(sIdx:eIdx,1) = dur95usec;
+            durRMSusVec(sIdx:eIdx,1) = durRMSus;
             dur95TailsVec(sIdx:eIdx,1) = dur95usecTails;
             bw3dbVec(sIdx:eIdx,:) = bw3db;
             bw10dbVec(sIdx:eIdx,:) = bw10db;
+            bwRMSVec(sIdx:eIdx,1) = bwRMS;
+            QRMSVec(sIdx:eIdx,1) = QRMS;
+            Q3dBVec(sIdx:eIdx,1) = Q3dB;
             % yNFiltVec = [yNFiltVec;yNFilt];
             yFiltVec(sIdx:eIdx,:)= yFilt';
             specClickTfVec(sIdx:eIdx,1) = specClickTf';
             specNoiseTfVec(sIdx:eIdx,1) = specNoiseTf';
             peakFrVec(sIdx:eIdx,1) = peakFr;
+            centFrVec(sIdx:eIdx,1) = centFr;
+            snrVec(sIdx:eIdx,1) = snr;
             yFiltBuffVec(sIdx:eIdx,:) = yFiltBuff';
             deltaEnvVec(sIdx:eIdx,1) = deltaEnv;
             nDurVec(sIdx:eIdx,1) = nDur;
@@ -112,12 +127,18 @@ ppSignalVec = ppSignalVec(1:eIdx,:);
 durClickVec = durClickVec(1:eIdx,:);
 dur95Vec = dur95Vec(1:eIdx,:);
 dur95TailsVec = dur95TailsVec(1:eIdx,:);
+durRMSusVec = durRMSusVec(1:eIdx,:);
 bw3dbVec =bw3dbVec(1:eIdx,:);
 bw10dbVec =bw10dbVec(1:eIdx,:);
+bwRMSVec = bwRMSVec(1:eIdx,:);
+QRMSVec = QRMSVec(1:eIdx,:);
+Q3dBVec = Q3dBVec(1:eIdx,:);
 yFiltVec = yFiltVec(1:eIdx,:);
 specClickTfVec = specClickTfVec(1:eIdx,:);
 specNoiseTfVec = specNoiseTfVec(1:eIdx,:);
 peakFrVec = peakFrVec(1:eIdx,:);
+centFrVec = centFrVec(1:eIdx,:);
+snrVec = snrVec(1:eIdx,:);
 yFiltBuffVec = yFiltBuffVec(1:eIdx,:);
 deltaEnvVec = deltaEnvVec(1:eIdx,:);
 nDurVec = nDurVec(1:eIdx,:);

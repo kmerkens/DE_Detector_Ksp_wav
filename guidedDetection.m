@@ -31,8 +31,10 @@ function [xwavNames,matlabDates,GraphDir] = guidedDetection(baseDir)
 % infile = 'VJanik_Ksima_Wild_log_150521.xls';
 
 inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\kogia';
-infile = 'Ksima_guided_detector_160601.xls';
-
+% infile = 'Ksima_guided_detector_160601.xls';
+infile = 'Ksima_guided_detector_161013_noBUZZ.xls';
+% infile = 'Ksima_guided_detector_160601_BUZZes.xls';
+% 
 
 %read the file into 3 matrices-- numeric, text, and raw cell array
 [num, txt, raw] = xlsread([inpath '\' infile]);
@@ -116,7 +118,7 @@ xwavNames = [];
 for i = 1:size(matlabDates,1)   
     %find which xwav file(s) correspond(s) with manual detection start 
     start = matlabDates(i,1);
-    fileIdx = find(startFile<start);
+    fileIdx = find(startFile<=start);
     startIdx = find(startFile == startFile(fileIdx(end))); %check for multiple matlab files per x.wav
    
     numfiles = size(allxwavNames,1);

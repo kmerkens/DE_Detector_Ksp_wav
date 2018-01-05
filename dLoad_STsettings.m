@@ -7,13 +7,17 @@ parametersST.chan = 1; % which channel do you want to look at?
 
 %parametersST.fRanges = [50000 99000]; 
 %parametersST.fRanges = [1000,159000]; % For Kogia on 320
-
-% parametersST.fRanges = [10000,180000]; % For Kogia on 500 D Mann
-%parametersST.fRanges = [1000,187000]; % For Kogia on 375
+% parametersST.fRanges = [10000,170000]; % For Ksima manuscript analysis
+% parametersST.fRanges = [10000,227000]; % For Kogia on 500 D Mann
+% parametersST.fRanges = [1000,187000]; % For Kogia on 375 V Yanik
+% parametersST.fRanges = [1000,190000]; % For Ksima on 384 CARB (CRP)
+% parametersST.fRanges = [120000,140000]; % For Ksima on 576 TGridley
 %parametersST.fRanges = [5000,200000]; % For Dalls on 480 T Yack
 %parametersST.fRanges = [5000,143500]; % For Kogia on 288
 %parametersST.fRanges = [5000,249000]; % For Harbor on 500 (E Jacobsen)
-parametersST.fRanges = [1000,190000]; % For Ksima on 384 CARB (CRP)
+parametersST.fRanges = [90000,143000]; % For DASPR 143
+
+
 
 %parametersST.thresholds = 13500; % Amplitude threshold in counts. 
 %parametersST.thresholds = 3500; % Trying to find something that will get 
@@ -23,10 +27,13 @@ parametersST.fRanges = [1000,190000]; % For Ksima on 384 CARB (CRP)
 % For predictability, keep this consistent between low and hi res steps.
 
 % parametersST.thresholds = 40000; %Set high for D. Mann wav files, no tf. 
-%parametersST.thresholds = 500; %Set lower to start V. Janik files
+% parametersST.thresholds = 500; %Set lower to start V. Janik files
+% parametersST.thresholds = 2500; %Adjusting for CARB file
+% parametersST.thresholds = 20000; %Adjusting for TGridley file
 %parametersST.thresholds = 1000000; %Set even higher again for TYack dalls
-%parametersST.thresholds = 750000; %Set low to start E Jaconsen porpoise
-parametersST.thresholds = 2500; %Adjusting for CARB file
+%parametersST.thresholds = 750000; %Set low to start E Jacobsen porpoise
+parametersST.thresholds = 20; %Adjusting for DASPR
+
 
 
 parametersST.frameLengthSec = .01; %Used for calculating fft size

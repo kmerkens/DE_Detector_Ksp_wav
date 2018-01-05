@@ -9,18 +9,22 @@
 % Different from cat_click_times.m - doesn't calculate time relative to raw
 % start, uses hdr info. plotting section commented out.
 
-%Set sampling frequency, in Hz
-% fs = 375000; %V Janik
-% fs = 500000; %D Mann, E Jacobson
-%fs = 480000; %T Yack Dalls
-fs = 384000; %CARB
+
+
+% ****ALSO SET PATHS FOR GUIDED ANALYSIS BELOW, APPX LINES 120
+
+close all
+% clear all
 
 %inDir = 'E:\metadata\bigDL'; % the path to your directory of detector outputs goes here
 %inDir = 'D:\metadata\Hawaii18K_disk04';
 % inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\VJanik_Ksima_Wild\metadata\kogia';
 % inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\DMann_Ksima_captive\metadata\kogia';
 %inDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\320_detectctor_dir\metadata\320_Detector_Test';
-inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\metadata\kogia';
+% inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\metadata\kogia';
+% inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\TGridley_Ksima_Wild\metadata\kogia';
+inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_DASPR_2017\metadata\kogia';
+
 
 matList = dir(fullfile(inDir,'kogia*.mat')); % Add wildcard to match the files you want to process.
 
@@ -28,10 +32,15 @@ clickDnum = [];
 durClickcon = [];
 bw3dbcon = [];
 bw10dbcon = [];
+bwRMScon = [];
 nDurcon = [];
 ndur95con = [];
 ndur95Tailscon = [];
 peakFrcon = [];
+centFrcon = [];
+QRMScon = [];
+Q3dBcon = [];
+snrcon = [];
 ppSignalcon = [];
 specClickTfcon = [];
 specNoiseTfcon = [];
@@ -44,8 +53,8 @@ for i1 = 1:length(matList)
     clickDnumTemp = [];
     % only need to load hdr and click times
     load(fullfile(inDir,matList(i1).name),'hdr','clickTimes', 'durClick', ...
-        'dur95','dur95Tails','bw3db','bw10db',...
-        'nDur', 'peakFr','ppSignal','specClickTf','specNoiseTf','yFilt','f')
+        'dur95','dur95Tails','bw3db','bw10db','bwRMS','QRMS','Q3dB',...
+        'nDur', 'peakFr','centFr','snr','ppSignal','specClickTf','specNoiseTf','yFilt','f')
     if ~isempty(clickTimes)
     % determine true click times
         clickDnumTemp = (clickTimes./sec2dnum) + hdr.start.dnum;
@@ -53,24 +62,43 @@ for i1 = 1:length(matList)
         durClickcon = [durClickcon;durClick];
         bw3dbcon = [bw3dbcon;bw3db];
         bw10dbcon = [bw10dbcon;bw10db];
+        bwRMScon = [bwRMScon;bwRMS];
         nDurcon = [nDurcon; nDur];
         ndur95con = [ndur95con; dur95];
         ndur95Tailscon = [ndur95Tailscon; dur95Tails];
         peakFrcon = [peakFrcon; peakFr];
+        centFrcon = [centFrcon; centFr];
+        QRMScon = [QRMScon; QRMS];
+        Q3dBcon = [Q3dBcon; Q3dB];
+        snrcon = [snrcon;snr];
         ppSignalcon = [ppSignalcon; ppSignal];
         specClickTfcon = [specClickTfcon; specClickTf];
         specNoiseTfcon = [specNoiseTfcon; specNoiseTf];
         yFiltcon = [yFiltcon; yFilt];
-        % write label file:
-        clickTimeRel = zeros(size(clickDnumTemp));
-        % generate label file by replacing .mat extension with .lab for
-        % wavesurfer:
-        outFileName = strrep(matList(i1).name,'.mat','.lab');
-        % open file for writing
-        fidOut = fopen(fullfile(inDir,outFileName),'w+');
-        fclose(fidOut);
+%         %%%This part isn't working right. 
+%         % write label file:use clickTimes, which is relative to the start
+%         % of the file, which is what we want for wavesurfer. Add a label:
+%         numclicks = size(clickTimes,1);
+%         clickLabelsNum = [001:1:numclicks]';
+%         clickLabelsStr = num2str(clickLabelsNum);
+%         %now make into cell arrays and combine
+% %         clickTimesCell = num2cell(clickTimes); 
+% %         clickTimesCell = cell(clickTimes);
+%          clickLabelsCell = cellstr(clickLabelsStr);
+% %         clickLabels = {clickTimesCell,clickLabelsCell};
+%         %turn it into a table
+% %         clickLabelsTab = cell2table(clickLabels);
+%         clickLabelsTab = table(clickTimes,clickLabelsCell);
+%         % generate label file by replacing .mat extension with .lab for
+%         % wavesurfer:
+%         outFileName = strrep(matList(i1).name,'.mat','.txt');
+%         outFilePath = [inDir,'\',outFileName];
+%         %Write file
+%         %csvwrite(outFilePath,clickLabels);
+%         writetable(clickLabelsTab,outFilePath)
     end
 end
+
 choppedDir = strsplit(inDir,'\'); %cut up the file path to get the disk name
 %so that you can save the files with identification. 
 filedate = datestr(now, 'yymmdd');
@@ -88,6 +116,72 @@ end
 xlswrite([inDir,'\',choppedDir{7},'_ClicksOnlyConcatCHAR',filedate,'.xls'],clickDnumChar)
 
 
+
+% %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%DEBUG
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %Add step to go through and make a "short list" of the detections, using
+    %clicks separated by not more than 3 minutes, providing a start time, end
+    %time and the total number of clicks. This is used for verifying the click
+    %bouts in triton to make a log before running a guided detector.
+    startclick = clickDnum(1,1);
+    threemin = datenum([0,0,0,0,3,0]);
+    clickitr = 1;
+    boutitr = 1;
+    bouts = [];
+    for ncc = 2:numclicks
+       prevclick = clickDnum(ncc-1,2);
+       checkclick = clickDnum(ncc,1);
+       clickdiff = checkclick-prevclick;
+       if clickdiff > threemin || ncc == numclicks
+           bouts(boutitr,1) = startclick;
+           if ncc == numclicks
+               endclick = clickDnum(ncc,2);
+           else
+               endclick = clickDnum(ncc-1,2);
+           end
+           bouts(boutitr,2) = endclick;
+           if ncc == numclicks
+               clickitr = clickitr +1;
+           end
+           bouts(boutitr,3) = clickitr;
+           if ncc < numclicks
+               startclick = clickDnum(ncc,2);
+           else
+               continue
+           end   
+           clickitr = 1;
+           boutitr = boutitr + 1;
+       elseif clickdiff < threemin
+           clickitr = clickitr + 1;
+           continue
+       end
+    end
+    boutsChar1 = char(datestr(bouts(:,1)));
+    boutsChar2 = char(datestr(bouts(:,2)));
+    boutsChar3 = num2str(bouts(:,3));
+    numbouts = size(bouts,1);
+    boutsChar = {};
+    for nb = 1:numbouts
+        boutsChar{nb,1} = boutsChar1(nb,:);
+        boutsChar{nb,2} = boutsChar2(nb,:);
+        boutsChar{nb,3} = boutsChar3(nb,:);
+    end
+    xlswrite([inDir,'\',choppedDir{4},'_BOUTS',filedate,'.xls'],boutsChar)
+
+
+
+
+
+
+
+
+
+
+% %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%Section added to do post-processing where all the clicks are together,
 %%%not speparted by xwav. 
 
@@ -96,8 +190,14 @@ xlswrite([inDir,'\',choppedDir{7},'_ClicksOnlyConcatCHAR',filedate,'.xls'],click
 % infile = 'VJanik_Ksima_Wild_log_150521.xls';
 % inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\DMann_Ksima_captive\kogia';
 % infile = 'DMann_Ksima_captive_log_150626.xls';
-inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\kogia';
-infile = 'Ksima_guided_detector_160601.xls';
+% inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\kogia';
+% infile = 'Ksima_guided_detector_160601.xls';
+% infile = 'Ksima_guided_detector_161013_noBUZZ.xls';
+% infile = 'Ksima_guided_detector_160601_BUZZes.xls';
+% inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\TGridley_Ksima_Wild\kogia';
+% infile = 'TGridley_Ksima_Wild_log_170511.xls';
+inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_DASPR_2017\kogia';
+infile = 'DASPR_Kspp_Wild_log_180104.xls';
 
 %read the file into 3 matrices-- numeric, text, and raw cell array
 [num, txt, raw] = xlsread([inpath '\' infile]);
@@ -122,9 +222,14 @@ ppSignal = ppSignalcon;
 durClick = durClickcon;
 bw3db = bw3dbcon;
 bw10db = bw10dbcon;
+bwRMS = bwRMScon;
+QRMS = QRMScon;
+Q3dB = Q3dBcon;
 specClickTf = specClickTfcon;
 specNoiseTf = specNoiseTfcon;
 peakFr = peakFrcon;
+centFr = centFrcon;
+snr = snrcon;
 nDur = nDurcon;
 ndur95 = ndur95con;
 ndur95Tails = ndur95Tailscon;
@@ -137,31 +242,39 @@ GraphDir = [inDir,'\matlab_graphs'];
 %     specClickTf,specNoiseTf,peakFr,nDur,yFilt,hdr,GraphDir,f);
 
 [medianValues,meanSpecClicks,meanSpecNoises,iciEncs,clickTimesconP,...
-    durClickconP, ndur95conP, ndur95TailsconP, bw3dbconP, bw10dbconP, nDurconP, peakFrconP, ppSignalconP,...
-    specClickTfconP,specNoiseTfconP, yFiltconP] = plotClickEncounters_posthoc_150310(encounterTimes,...
-    clickTimes,ppSignal,durClick,ndur95,ndur95Tails,bw3db,bw10db,...
-    specClickTf,specNoiseTf,peakFr,nDur,yFilt,hdr,GraphDir,f);
+    durClickconP, ndur95conP, ndur95TailsconP, bw3dbconP, bw10dbconP, ...
+    bwRMSconP, QRMSconP, Q3dBconP, nDurconP, peakFrconP, centFrconP, ...
+    snrconP, ppSignalconP, specClickTfconP,specNoiseTfconP,...
+    yFiltconP] = plotClickEncounters_posthoc_150310(encounterTimes,...
+    clickTimes,ppSignal,durClick,ndur95,ndur95Tails,bw3db,bw10db,bwRMS,QRMS,Q3dB,...
+    specClickTf,specNoiseTf,peakFr,centFr,snr,nDur,yFilt,hdr,GraphDir,f);
 
 %Change the name on the pruned parameters
 clickDnum = clickTimesconP;
 durClickcon = durClickconP;
 bw3dbcon = bw3dbconP;
 bw10dbcon = bw10dbconP;
+bwRMScon = bwRMSconP;
+QRMScon = QRMSconP;
+Q3dBcon = Q3dBconP;
 nDurcon = nDurconP;
 ndur95con = ndur95conP;
 ndur95Tailscon = ndur95TailsconP;
 peakFrcon = peakFrconP;
+centFrcon = centFrconP;
 ppSignalcon = ppSignalconP;
 specClickTfcon = specClickTfconP;
 specNoiseTfcon = specNoiseTfconP;
 yFiltcon = yFiltconP;
+snrcon = snrconP;
 
 %Then save everything
 save([inDir,'\',choppedDir{7},'_ClicksOnlyConcat',filedate,'.mat'],...
     'clickDnum','durClickcon','ndur95con','ndur95Tailscon','bw3dbcon',...
-    'bw10dbcon','nDurcon', 'peakFrcon','ppSignalcon',...
+    'bw10dbcon','bwRMScon','QRMScon','Q3dBcon','nDurcon', 'peakFrcon',...
+    'centFrcon','snrcon','ppSignalcon',...
     'specClickTfcon','specNoiseTfcon','yFiltcon','medianValues',...
-    'meanSpecClicks','meanSpecNoises','iciEncs','f')
+    'meanSpecClicks','meanSpecNoises','iciEncs','f','hdr')
 
 %Save the pruned clicks that remain after removing any with too small icis
 

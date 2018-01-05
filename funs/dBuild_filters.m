@@ -8,7 +8,7 @@ function [previousFs,fftSize,fftWindow,binWidth_Hz,freq_kHz,...
 
 %wideBandFilter = spBuildEquiRippleFIR(p.bpRanges, [0, 1], 'Fs', fs);
 %[b,a] = ellip(4,0.1,40,[p.bpRanges(1) p.bpRanges(2)]*2/fs,'bandpass');
-N = 12;
+N = 4; %Changed from 12 to 4 as per P.T. Madsen recommendations 1711
 [b,a] = butter(N/2, [p.bpRanges(1) p.bpRanges(2)]/(fs/2),'bandpass'); 
 wideBandFilter = [b;a];
 previousFs = fs;
