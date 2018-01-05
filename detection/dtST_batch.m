@@ -24,7 +24,13 @@ for idx = 1:N  % "parfor" works here, parallellizing the process across as
         currentFile = fullfile(baseDir, detFiles(idx,:));
         [~,strippedName,fType1] = fileparts(currentFile);
         [~,~,fType2] = fileparts(strippedName);
-        fType = [fType2,fType1];
+        %Added to deal with file names, not .x.wav, that have extra . in
+        %them, eg DASPR
+        if strncmp(fType2,'.x',2);
+            fType = fType1;
+        else
+            fType = [fType2,fType1];
+        end
         % Read the file header info
         if strncmp(fType,'.wav',4)|| strncmp(fType,'.WAV',4)
             hdr = ioReadWavHeader(currentFile, p.DateRE);
