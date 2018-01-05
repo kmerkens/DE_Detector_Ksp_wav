@@ -39,11 +39,17 @@ parametersST.thresholds = 20; %Adjusting for DASPR
 parametersST.frameLengthSec = .01; %Used for calculating fft size
 parametersST.overlap = .50; % fft overlap
 parametersST.REWavExt = '(\.x)?\.wav';%  expression to match .wav or .x.wav
+% parametersST.REWavExt = '(\w+).(\.x)?\.wav';%  expression to match .wav or .x.wav
 
 % if you're using wav files that have a time stamp in the name, put a
 % regular expression for extracting that here:
-parametersST.DateRE = '_(\d*)_(\d*)';
+% parametersST.DateRE = '_(\d*)_(\d*)';
 % mine look like "filename_20110901_234905.wav" 
 % ie "*_yyyymmdd_HHMMSS.wav"
+%Changing to work with DASPR file names, which are
+%0123456789.yymmddHHMMSS.wav
+parametersST.DateRE = '.(\d{12})';
+
+
 
 

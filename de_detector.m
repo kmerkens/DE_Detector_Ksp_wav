@@ -57,9 +57,13 @@ depl = 'kogia';
 %depl = 'dalls';
 %depl = 'harbor';
 
+DASPR = 1; %Change this to be 0 if this is not a daspr file. 
+%If it IS, then make this 1, and the code will ignore any clicks with a
+%time stamp of 0.06 or less, which seem to appear at the start of all
+%files. 
 
 % Set flags indicating which routines to run. 
-lowResDet = 1; %run short time detector.
+lowResDet = 0; %run short time detector.
 highResDet = 1; %run high res detector
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,7 +97,7 @@ if ~isempty(detFiles)
         parametersHR = dLoad_HRsettings;
         % run detector
         dHighres_click_batch(fullFiles,fullLabels,baseDir,parametersHR,...
-            viewPath,tfFullFile,encounterTimes,guideDetector,GraphDir)
+            viewPath,tfFullFile,encounterTimes,guideDetector,GraphDir,DASPR)
         display('Done with high-res detector')
     end
 end

@@ -1,5 +1,5 @@
 function [delFlag] = clickInlinePProc(outFileName,clickTimes,p,...
-    encounterTimes,guideDetector,hdr)
+    encounterTimes,guideDetector,hdr,DASPR)
 
 % Step through vector of click times, looking forward and back to throw out
 % solo clicks, and pairs of clicks, if they are too far away from a cluster
@@ -117,6 +117,8 @@ if size(clickTimes,1) > 2
     
     
     delFlag = ones(size(clickTimes(:,1)));
+    
+    
     for itr1 = 1:size(clickTimes,1)
         if itr1 == 1
             if clickTimes(itr1+2,1)-clickTimes(itr1,1)>p.maxNeighbor
@@ -231,6 +233,21 @@ if guideDetector == 1
     end
 end
 clickTimesPruned = clickTimes(delFlag==1,:);
+
+% % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % % %%%%Added 180105 if DASPR, Remove clicks from first 0.06 seconds, which are in
+% % % %%%%% every DASPR file. 
+if DASPR == 1
+    if ~isempty(clickTimes)
+        startnoise = find(clickTimes(:,1) < 0.06);
+        delFlag(startnoise) = 0;
+    end
+    clickTimesPruned = clickTimes(delFlag==1,:);
+end
+
+
+
+
 
 fidOut = fopen(strcat(outFileName(1:end-1),p.ppExt),'w+');
 if ~isempty(clickTimesPruned)

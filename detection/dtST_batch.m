@@ -26,7 +26,7 @@ for idx = 1:N  % "parfor" works here, parallellizing the process across as
         [~,~,fType2] = fileparts(strippedName);
         %Added to deal with file names, not .x.wav, that have extra . in
         %them, eg DASPR
-        if strncmp(fType2,'.x',2);
+        if ~strncmp(fType2,'.x',2);
             fType = fType1;
         else
             fType = [fType2,fType1];

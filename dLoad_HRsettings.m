@@ -96,9 +96,12 @@ parametersHR.mergeThr = 20;%reduced to try to get more shorter clicks in echo bo
 
 % if you're using wav files that have a time stamp in the name, put a
 % regular expression for extracting that here:
-parametersHR.DateRE = '_(\d*)_(\d*)';
+% parametersHR.DateRE = '_(\d*)_(\d*)';
 % mine look like "filename_20110901_234905.wav" 
 % ie "*_yyyymmdd_HHMMSS.wav"
+%Changing to work with DASPR file names, which are
+%0123456789.yymmddHHMMSS.wav
+parametersHR.DateRE = '.(\d{12})';
 
 %%% Output file extensions. Probably don't need to be changed %%%
 parametersHR.clickAnnotExt = 'cTg';

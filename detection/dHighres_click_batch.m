@@ -1,5 +1,5 @@
 function dHighres_click_batch(fullFiles,fullLabels,inDisk,p,viewPath,...
-    tfFullFile,encounterTimes,guideDetector,GraphDir)
+    tfFullFile,encounterTimes,guideDetector,GraphDir,DASPR)
 
 N = length(fullFiles);
 previousFs = 0; % make sure we build filters on first pass
@@ -53,8 +53,9 @@ for idx1=1:N; % for each data file
     
     % Run post processing to remove rogue loner clicks, prior to writing
     % the remaining output files.
+    %Also, if DASPR remove any clicks from the first 0.06 seconds
     delFlag = clickInlinePProc(fullLabels{idx1},clickTimes,p,encounterTimes,...
-        guideDetector,hdr);
+        guideDetector,hdr,DASPR);
     delIdx = find(delFlag==1);
     
     % save a mat file now, rather than recalculating later

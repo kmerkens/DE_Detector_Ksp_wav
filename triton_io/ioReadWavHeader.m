@@ -114,9 +114,14 @@ else
     % determine timestamp
     [~,~,~,~,k] = regexp(shortName, DateRE);
     catDate = cell2mat(k{1});
+    %180105 Added to handle DASPR file names - append 20 for the year
+    if size(catDate,2)== 12
+        catDate = ['20' catDate];
+    end
     hdr.start.dvec = [str2double(catDate(1:4)),str2double(catDate(5:6)),...
         str2double(catDate(7:8)),str2double(catDate(9:10)),...
         str2double(catDate(11:12)),str2double(catDate(13:14))];
+
     hdr.start.dnum = datenum(hdr.start.dvec);
     hdr.xhd.year = hdr.start.dvec(1);          % Year
     hdr.xhd.month = hdr.start.dvec(2);         % Month
