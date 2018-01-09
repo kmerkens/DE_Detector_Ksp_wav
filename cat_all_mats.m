@@ -31,7 +31,7 @@ matList = dir(fullfile(inDir,'NOAA*.mat')); % Add wildcard to match the files yo
 
 %If you want to look at a subset of data based on the SNR, indicate that
 %here, as well as the SNR threshold to use as a cutoff
-subset = 1; %0 for no, 1 for yes
+subset = 0; %0 for no, 1 for yes
 SNRthresh = 20; %If subset = 1 only clicks with SNR >= this value will be examined.
 
 % fs = 375000; %Janik

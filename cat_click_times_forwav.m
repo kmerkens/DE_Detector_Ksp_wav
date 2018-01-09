@@ -26,7 +26,16 @@ close all
 inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_DASPR_2017\metadata\kogia';
 
 
-matList = dir(fullfile(inDir,'kogia*.mat')); % Add wildcard to match the files you want to process.
+% matList = dir(fullfile(inDir,'kogia*.mat')); % Add wildcard to match the files you want to process.
+matList = dir(fullfile(inDir,'1*.mat')); %for DASPRs it's the first few digits of the instrument name. 
+%If you don't speficy this, it will attempt to use any/all .mat files, and
+%that can be a problem if you already have run this and have some summary
+%.mat files in the directory. 
+
+%ID whether this is a daspr 1 = yes, 0 = no. Determines how bouts are
+%output.
+DASPR = 1;
+
 
 clickDnum = [];
 durClickcon = [];
@@ -117,59 +126,74 @@ xlswrite([inDir,'\',choppedDir{7},'_ClicksOnlyConcatCHAR',filedate,'.xls'],click
 
 
 
-% %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%DEBUG
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %Add step to go through and make a "short list" of the detections, using
-    %clicks separated by not more than 3 minutes, providing a start time, end
-    %time and the total number of clicks. This is used for verifying the click
-    %bouts in triton to make a log before running a guided detector.
-    startclick = clickDnum(1,1);
-    threemin = datenum([0,0,0,0,3,0]);
-    clickitr = 1;
-    boutitr = 1;
-    bouts = [];
-    for ncc = 2:numclicks
-       prevclick = clickDnum(ncc-1,2);
-       checkclick = clickDnum(ncc,1);
-       clickdiff = checkclick-prevclick;
-       if clickdiff > threemin || ncc == numclicks
-           bouts(boutitr,1) = startclick;
-           if ncc == numclicks
-               endclick = clickDnum(ncc,2);
-           else
-               endclick = clickDnum(ncc-1,2);
-           end
-           bouts(boutitr,2) = endclick;
-           if ncc == numclicks
-               clickitr = clickitr +1;
-           end
-           bouts(boutitr,3) = clickitr;
-           if ncc < numclicks
-               startclick = clickDnum(ncc,2);
-           else
-               continue
-           end   
-           clickitr = 1;
-           boutitr = boutitr + 1;
-       elseif clickdiff < threemin
-           clickitr = clickitr + 1;
-           continue
+%Add step to go through and make a "short list" of the detections, using
+%clicks separated by not more than 3 minutes, providing a start time, end
+%time and the total number of clicks. This is used for verifying the click
+%bouts in triton to make a log before running a guided detector.
+%180105-changed to be only 2 minutes, to work with the daspr files. Also 
+%add file name, for ease of identification
+startclick = clickDnum(1,1);
+threemin = datenum([0,0,0,0,2,0]); %actually two minute now. 
+clickitr = 1;
+boutitr = 1;
+bouts = [];
+for ncc = 2:numclicks
+   prevclick = clickDnum(ncc-1,2);
+   checkclick = clickDnum(ncc,1);
+   clickdiff = checkclick-prevclick;
+   if clickdiff > threemin || ncc == numclicks
+       bouts(boutitr,1) = startclick;
+       if ncc == numclicks
+           endclick = clickDnum(ncc,2);
+       else
+           endclick = clickDnum(ncc-1,2);
        end
+       bouts(boutitr,2) = endclick;
+       if ncc == numclicks
+           clickitr = clickitr +1;
+       end
+       bouts(boutitr,3) = clickitr;
+       if ncc < numclicks
+           startclick = clickDnum(ncc,2);
+       else
+           continue
+       end   
+       clickitr = 1;
+       boutitr = boutitr + 1;
+   elseif clickdiff < threemin
+       clickitr = clickitr + 1;
+       continue
+   end
+end
+boutsChar1 = char(datestr(bouts(:,1)));
+boutsChar2 = char(datestr(bouts(:,2)));
+boutsChar3 = num2str(bouts(:,3));
+numbouts = size(bouts,1);
+boutsChar = {};
+if DASPR == 1
+    %Format the start date/time to match the file names, for easier
+    %identification of the correct file. (it's too hard to try to match
+    %files)
+    boutsChar4 = [];
+    for bb = 1:numbouts
+        datestartvec = datevec(bouts(bb,1));
+        datestartdatemin = datestr(datestartvec,'yymmddHHMM');
+        boutsChar4 = [boutsChar4;datestartdatemin];
     end
-    boutsChar1 = char(datestr(bouts(:,1)));
-    boutsChar2 = char(datestr(bouts(:,2)));
-    boutsChar3 = num2str(bouts(:,3));
-    numbouts = size(bouts,1);
-    boutsChar = {};
-    for nb = 1:numbouts
-        boutsChar{nb,1} = boutsChar1(nb,:);
-        boutsChar{nb,2} = boutsChar2(nb,:);
-        boutsChar{nb,3} = boutsChar3(nb,:);
+end
+    
+for nb = 1:numbouts
+    boutsChar{nb,1} = boutsChar1(nb,:);
+    boutsChar{nb,2} = boutsChar2(nb,:);
+    boutsChar{nb,3} = boutsChar3(nb,:);
+    if DASPR == 1
+        boutsChar{nb,4} = boutsChar4(nb,:);
     end
-    xlswrite([inDir,'\',choppedDir{4},'_BOUTS',filedate,'.xls'],boutsChar)
+end
+xlswrite([inDir,'\',choppedDir{7},'_BOUTS',filedate,'.xls'],boutsChar)
 
 
 
