@@ -23,7 +23,7 @@ close all
 %inDir = 'C:\Users\Karlina.Merkens\Documents\Kogia\320_detectctor_dir\metadata\320_Detector_Test';
 % inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\metadata\kogia';
 % inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\TGridley_Ksima_Wild\metadata\kogia';
-inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_DASPR_2017\metadata\kogia';
+inDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_DASBR_2017\metadata\kogia';
 
 
 % matList = dir(fullfile(inDir,'kogia*.mat')); % Add wildcard to match the files you want to process.
@@ -34,7 +34,7 @@ matList = dir(fullfile(inDir,'1*.mat')); %for DASPRs it's the first few digits o
 
 %ID whether this is a daspr 1 = yes, 0 = no. Determines how bouts are
 %output.
-DASPR = 1;
+DASBR = 1;
 
 
 clickDnum = [];
@@ -133,10 +133,10 @@ xlswrite([inDir,'\',choppedDir{7},'_ClicksOnlyConcatCHAR',filedate,'.xls'],click
 %clicks separated by not more than 3 minutes, providing a start time, end
 %time and the total number of clicks. This is used for verifying the click
 %bouts in triton to make a log before running a guided detector.
-%180105-changed to be only 2 minutes, to work with the daspr files. Also 
+%180105-changed to be only 2 minutes, to work with the dasbr files. Also 
 %add file name, for ease of identification
 startclick = clickDnum(1,1);
-threemin = datenum([0,0,0,0,2,0]); %actually two minute now. 
+threemin = datenum([0,0,0,0,2,05]); %actually two minutes, 5 seconds now. 
 clickitr = 1;
 boutitr = 1;
 bouts = [];
@@ -173,14 +173,16 @@ boutsChar2 = char(datestr(bouts(:,2)));
 boutsChar3 = num2str(bouts(:,3));
 numbouts = size(bouts,1);
 boutsChar = {};
-if DASPR == 1
+
+if DASBR == 1
     %Format the start date/time to match the file names, for easier
     %identification of the correct file. (it's too hard to try to match
     %files)
     boutsChar4 = [];
     for bb = 1:numbouts
         datestartvec = datevec(bouts(bb,1));
-        datestartdatemin = datestr(datestartvec,'yymmddHHMM');
+        datestartdatemin = [datestr(datestartvec,'yymmddHHMM'),'XX']; %has XX instead of the seconds because
+        %rhe seconds doesn't often line up exactly with the file names.
         boutsChar4 = [boutsChar4;datestartdatemin];
     end
 end
@@ -189,7 +191,7 @@ for nb = 1:numbouts
     boutsChar{nb,1} = boutsChar1(nb,:);
     boutsChar{nb,2} = boutsChar2(nb,:);
     boutsChar{nb,3} = boutsChar3(nb,:);
-    if DASPR == 1
+    if DASBR == 1
         boutsChar{nb,4} = boutsChar4(nb,:);
     end
 end
@@ -220,8 +222,8 @@ xlswrite([inDir,'\',choppedDir{7},'_BOUTS',filedate,'.xls'],boutsChar)
 % infile = 'Ksima_guided_detector_160601_BUZZes.xls';
 % inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\TGridley_Ksima_Wild\kogia';
 % infile = 'TGridley_Ksima_Wild_log_170511.xls';
-inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_DASPR_2017\kogia';
-infile = 'DASPR_Kspp_Wild_log_180104.xls';
+inpath = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_DASBR_2017\kogia';
+infile = 'DASBR_Kspp_Wild_log_180104.xls';
 
 %read the file into 3 matrices-- numeric, text, and raw cell array
 [num, txt, raw] = xlsread([inpath '\' infile]);

@@ -11,7 +11,7 @@ function parametersHR = dLoad_HRsettings
 % parametersHR.bpRanges = [60000,220000]; % For Ksima on 576 TGridley
 %parametersHR.bpRanges = [5000,200000]; % For dalls on 480 T Yack
 %parametersHR.bpRanges = [5000,143500]; %For Kogia on 288
-parametersHR.bpRanges = [100000,143000]; % For DASPR
+parametersHR.bpRanges = [90000,143000]; % For DASPR
 
 
 parametersHR.frameLengthUs = 1200; % For fft computation
@@ -61,7 +61,7 @@ parametersHR.delphClickDurLims = [5,100];%increased for wav
 %%% Other pruning params %%%
 %parametersHR.cutPeakBelowKHz = 80; % discard click if peak frequency below X kHz
 % parametersHR.cutPeakBelowKHz = 100; %% For Kogia on 500 (DMann)
-parametersHR.cutPeakBelowKHz = 105; %% For DASPR
+parametersHR.cutPeakBelowKHz = 110; %% For DASBR
 %parametersHR.cutPeakBelowKHz = 110; %% For dalls on 480
 %parametersHR.cutPeakAboveKHz = 99.9; % discard click if peak frequency above Y kHz 
 parametersHR.cutPeakAboveKHz = 150;%% For Kogia on 500 (DMann)
@@ -99,7 +99,7 @@ parametersHR.mergeThr = 20;%reduced to try to get more shorter clicks in echo bo
 % parametersHR.DateRE = '_(\d*)_(\d*)';
 % mine look like "filename_20110901_234905.wav" 
 % ie "*_yyyymmdd_HHMMSS.wav"
-%Changing to work with DASPR file names, which are
+%Changing to work with DASBR file names, which are
 %0123456789.yymmddHHMMSS.wav
 parametersHR.DateRE = '.(\d{12})';
 

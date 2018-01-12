@@ -46,7 +46,7 @@ parametersST.REWavExt = '(\.x)?\.wav';%  expression to match .wav or .x.wav
 % parametersST.DateRE = '_(\d*)_(\d*)';
 % mine look like "filename_20110901_234905.wav" 
 % ie "*_yyyymmdd_HHMMSS.wav"
-%Changing to work with DASPR file names, which are
+%Changing to work with DASBR file names, which are
 %0123456789.yymmddHHMMSS.wav
 parametersST.DateRE = '.(\d{12})';
 

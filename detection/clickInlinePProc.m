@@ -1,5 +1,5 @@
 function [delFlag] = clickInlinePProc(outFileName,clickTimes,p,...
-    encounterTimes,guideDetector,hdr,DASPR)
+    encounterTimes,guideDetector,hdr,DASBR)
 
 % Step through vector of click times, looking forward and back to throw out
 % solo clicks, and pairs of clicks, if they are too far away from a cluster
@@ -235,11 +235,11 @@ end
 clickTimesPruned = clickTimes(delFlag==1,:);
 
 % % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % % %%%%Added 180105 if DASPR, Remove clicks from first 0.06 seconds, which are in
-% % % %%%%% every DASPR file. 
-if DASPR == 1
+% % % %%%%Added 180105 if DASBR, Remove clicks from first 0.2 seconds, which are in
+% % % %%%%% every DASBR file. 
+if DASBR == 1
     if ~isempty(clickTimes)
-        startnoise = find(clickTimes(:,1) < 0.06);
+        startnoise = find(clickTimes(:,1) < 0.2);
         delFlag(startnoise) = 0;
     end
     clickTimesPruned = clickTimes(delFlag==1,:);
