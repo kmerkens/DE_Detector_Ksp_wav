@@ -15,7 +15,8 @@ parametersST.chan = 1; % which channel do you want to look at?
 %parametersST.fRanges = [5000,200000]; % For Dalls on 480 T Yack
 %parametersST.fRanges = [5000,143500]; % For Kogia on 288
 %parametersST.fRanges = [5000,249000]; % For Harbor on 500 (E Jacobsen)
-parametersST.fRanges = [90000,143000]; % For DASPR 143
+% parametersST.fRanges = [90000,143000]; % For DASPR 143
+parametersST.fRanges = [1000,15900]; % For C Jenner
 
 
 
@@ -32,7 +33,8 @@ parametersST.fRanges = [90000,143000]; % For DASPR 143
 % parametersST.thresholds = 20000; %Adjusting for TGridley file
 %parametersST.thresholds = 1000000; %Set even higher again for TYack dalls
 %parametersST.thresholds = 750000; %Set low to start E Jacobsen porpoise
-parametersST.thresholds = 20; %Adjusting for DASPR
+% parametersST.thresholds = 20; %Adjusting for DASPR
+parametersST.thresholds = 2000; %Adjusting for CJenner
 
 
 
@@ -43,12 +45,12 @@ parametersST.REWavExt = '(\.x)?\.wav';%  expression to match .wav or .x.wav
 
 % if you're using wav files that have a time stamp in the name, put a
 % regular expression for extracting that here:
-% parametersST.DateRE = '_(\d*)_(\d*)';
+parametersST.DateRE = '_(\d*)_(\d*)';
 % mine look like "filename_20110901_234905.wav" 
 % ie "*_yyyymmdd_HHMMSS.wav"
 %Changing to work with DASBR file names, which are
 %0123456789.yymmddHHMMSS.wav
-parametersST.DateRE = '.(\d{12})';
+% parametersST.DateRE = '.(\d{12})';
 
 
 

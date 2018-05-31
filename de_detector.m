@@ -24,7 +24,7 @@ function de_detector
 % clearvars
 close all
 fclose all;
-
+warning('off','all') %This useful in the more recent versions of matlab because there are a LOT Of warnings.
 tic
 
 % Set transfer function location
@@ -44,8 +44,8 @@ tfFullFile = [];
 % baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\DMann_Ksima_captive\';
 % baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_CNMI_Ksima_Wild\';
 % baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\TGridley_Ksima_Wild\';
-baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_DASBR_2017\';
-
+% baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_DASBR_2017\';
+baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\Jenner_Ksima_Wild\';
 
 % Name of the deployment. This should be the first few characters in the 
 % directory(ies) you want to look in you want to look at. For now,
@@ -53,17 +53,18 @@ baseDir = 'C:\Users\KMERKENS\Documents\Kogia\OtherRecordings\NOAACRP_DASBR_2017\
 % TODO: implement recursive directory search for more flexibility.
 %depl = 'Hawaii';
 
-depl = 'kogia';
+depl = 'Kogia';
+% depl = 'kogia';
 %depl = 'dalls';
 %depl = 'harbor';
 
-DASBR = 1; %Change this to be 0 if this is not a daspr file. 
+DASBR = 0; %Change this to be 0 if this is not a daspr file. 
 %If it IS, then make this 1, and the code will ignore any clicks with a
 %time stamp of 0.06 or less, which seem to appear at the start of all
 %files. 
 
 % Set flags indicating which routines to run. 
-lowResDet = 1; %run short time detector.
+lowResDet = 0; %run short time detector.
 highResDet = 1; %run high res detector
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -11,7 +11,8 @@ function parametersHR = dLoad_HRsettings
 % parametersHR.bpRanges = [60000,220000]; % For Ksima on 576 TGridley
 %parametersHR.bpRanges = [5000,200000]; % For dalls on 480 T Yack
 %parametersHR.bpRanges = [5000,143500]; %For Kogia on 288
-parametersHR.bpRanges = [90000,143000]; % For DASPR
+% parametersHR.bpRanges = [90000,143000]; % For DASBR
+parametersHR.bpRanges = [1000,15900]; % For CJenner
 
 
 parametersHR.frameLengthUs = 1200; % For fft computation
@@ -26,7 +27,8 @@ parametersHR.clipThreshold = .98;%  Normalized clipping threshold btwn 0 and 1. 
 % parametersHR.ppThresh = 40;% minimum  RL threshold - dB peak to peak. 
 %Decreased to 40 for DMann wav, particularly because no tf available. 
 % parametersHR.ppThresh = 20; %decresed further for V. Janik data and carb
-parametersHR.ppThresh = 10; %decresed further for CASPR
+% parametersHR.ppThresh = 10; %decresed further for DASBR
+parametersHR.ppThresh = 50; %for CJenner
 
 
  
